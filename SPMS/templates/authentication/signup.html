@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}SPMS — Student Registration{% endblock %}
+{% block layout %}
+<main class="auth-wrapper" style="padding-top: 60px; padding-bottom: 60px;">
+    <div class="auth-card" style="max-width: 500px;">
+        <div class="auth-header">
+            <h2>Student Registration</h2>
+            <p>Create your SPMS account.</p>
+        </div>
+        
+        {% include 'components/messages.html' %}
+        
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field.errors }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <span class="form-text">{{ field.help_text|safe }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Register Account</button>
+        </form>
+        
+        <div class="auth-footer">
+            Already have an account? <a href="{% url 'accounts:login' %}">Sign in here</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

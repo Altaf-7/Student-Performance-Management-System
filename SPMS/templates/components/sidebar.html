@@ -1,0 +1,71 @@
+<aside class="sidebar">
+    {% if request.user.role == 'student' %}
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Academic</div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'students:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="#" class="sidebar-link">Subjects</a>
+                <a href="#" class="sidebar-link">Attendance</a>
+                <a href="#" class="sidebar-link">Assignments</a>
+                <a href="#" class="sidebar-link">Exams</a>
+                <a href="#" class="sidebar-link">Results</a>
+            </nav>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Account</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link">Profile</a>
+                <a href="{% url 'accounts:change_password' %}" class="sidebar-link">Settings</a>
+            </nav>
+        </div>
+    {% elif request.user.role == 'faculty' %}
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Academic</div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'faculty:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="#" class="sidebar-link">Subjects</a>
+                <a href="#" class="sidebar-link">Students</a>
+                <a href="#" class="sidebar-link">Lectures</a>
+                <a href="#" class="sidebar-link">Attendance</a>
+                <a href="#" class="sidebar-link">Assignments</a>
+                <a href="#" class="sidebar-link">Exams</a>
+                <a href="#" class="sidebar-link">Performance</a>
+            </nav>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Account</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link">Profile</a>
+                <a href="{% url 'accounts:change_password' %}" class="sidebar-link">Settings</a>
+            </nav>
+        </div>
+    {% elif request.user.role == 'admin' or request.user.is_superuser %}
+        <div class="sidebar-section">
+            <div class="sidebar-heading">System</div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'accounts:admin_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="#" class="sidebar-link">Users</a>
+                <a href="#" class="sidebar-link">Students</a>
+                <a href="#" class="sidebar-link">Faculty</a>
+            </nav>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Institution</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link">Departments</a>
+                <a href="#" class="sidebar-link">Courses</a>
+                <a href="#" class="sidebar-link">Batches</a>
+                <a href="#" class="sidebar-link">Semesters</a>
+                <a href="#" class="sidebar-link">Subjects</a>
+                <a href="#" class="sidebar-link">Subject Offerings</a>
+            </nav>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Account</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link">Reports</a>
+                <a href="{% url 'accounts:change_password' %}" class="sidebar-link">Settings</a>
+            </nav>
+        </div>
+    {% endif %}
+</aside>

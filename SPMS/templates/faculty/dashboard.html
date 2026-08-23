@@ -1,0 +1,52 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Faculty Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back, Professor {{ request.user.last_name|default:request.user.email }} — Department of Computer Science (Placeholder){% endblock %}
+
+{% block dashboard_content %}
+<div class="stat-grid">
+    {% include 'components/stat_card.html' with label="Assigned Subjects" value="4" %}
+    {% include 'components/stat_card.html' with label="Total Students" value="120" %}
+    {% include 'components/stat_card.html' with label="Pending Grading" value="45" %}
+    {% include 'components/stat_card.html' with label="Lectures Today" value="2" %}
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Quick Actions</h2>
+    </div>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <a href="#" class="btn btn-primary">Create Assignment</a>
+        <a href="#" class="btn btn-secondary">Mark Attendance</a>
+        <a href="#" class="btn btn-secondary">Enter Results</a>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Assigned Subjects</h2>
+    </div>
+    <div class="data-list">
+        <!-- Mock Data for visual development -->
+        <div class="data-item">
+            <div>
+                <div class="data-main">Database Management Systems</div>
+                <div class="data-sub">Course: MCA-201 • Semester: 2</div>
+            </div>
+            <div class="data-meta">
+                <div class="data-main">60 Students</div>
+            </div>
+        </div>
+        <div class="data-item">
+            <div>
+                <div class="data-main">Advanced Data Structures</div>
+                <div class="data-sub">Course: MCA-203 • Semester: 2</div>
+            </div>
+            <div class="data-meta">
+                <div class="data-main">60 Students</div>
+            </div>
+        </div>
+        <p style="color: var(--muted); font-size: 13px; margin-top: 15px;">* Data will appear here once the Academic module is fully implemented.</p>
+    </div>
+</div>
+{% endblock %}

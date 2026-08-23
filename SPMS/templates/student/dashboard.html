@@ -1,0 +1,63 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Student Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back, {{ request.user.first_name|default:request.user.email }} — MCA, Semester 2 (Placeholder){% endblock %}
+
+{% block dashboard_content %}
+<div class="stat-grid">
+    {% include 'components/stat_card.html' with label="Overall Attendance" value="85%" %}
+    {% include 'components/stat_card.html' with label="Current SGPA" value="8.4" %}
+    {% include 'components/stat_card.html' with label="Pending Assignments" value="3" %}
+    {% include 'components/stat_card.html' with label="Upcoming Exams" value="2" %}
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Upcoming Assignments</h2>
+    </div>
+    <div class="data-list">
+        <!-- Mock Data for visual development -->
+        <div class="data-item">
+            <div>
+                <div class="data-main">Database Management Systems - Assignment 3</div>
+                <div class="data-sub">Subject: MCA-201</div>
+            </div>
+            <div class="data-meta">
+                <span class="badge badge-warning">Pending</span>
+                <div class="data-sub">Due: Oct 15, 2026</div>
+            </div>
+        </div>
+        <div class="data-item">
+            <div>
+                <div class="data-main">Operating Systems - Lab Report</div>
+                <div class="data-sub">Subject: MCA-202</div>
+            </div>
+            <div class="data-meta">
+                <span class="badge badge-success">Submitted</span>
+                <div class="data-sub">Due: Oct 10, 2026</div>
+            </div>
+        </div>
+        <p style="color: var(--muted); font-size: 13px; margin-top: 15px;">* Data will appear here once the Assignment module is implemented.</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Recent Performance</h2>
+    </div>
+    <div class="data-list">
+        <!-- Mock Data for visual development -->
+        <div class="data-item">
+            <div>
+                <div class="data-main">Mid-Term Examination</div>
+                <div class="data-sub">MCA-201 Database Management Systems</div>
+            </div>
+            <div class="data-meta">
+                <div class="data-main">42/50</div>
+                <span class="badge badge-success" style="margin-top: 4px;">Pass</span>
+            </div>
+        </div>
+        <p style="color: var(--muted); font-size: 13px; margin-top: 15px;">* Data will appear here once the Examination module is implemented.</p>
+    </div>
+</div>
+{% endblock %}
