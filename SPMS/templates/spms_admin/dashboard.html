@@ -1,0 +1,76 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}System Dashboard{% endblock %}
+{% block page_subtitle %}Overview of SPMS Platform Operations{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">System Overview</h2>
+    </div>
+    <div class="stat-grid">
+        {% include 'components/stat_card.html' with label="Total Users" value=total_users %}
+        {% include 'components/stat_card.html' with label="Students" value=total_students %}
+        {% include 'components/stat_card.html' with label="Faculty" value=total_faculty %}
+        {% include 'components/stat_card.html' with label="Departments" value=total_departments %}
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Academic Overview</h2>
+    </div>
+    <div class="stat-grid">
+        {% include 'components/stat_card.html' with label="Total Courses" value=total_courses %}
+        {% include 'components/stat_card.html' with label="Active Batches" value=active_batches %}
+        {% include 'components/stat_card.html' with label="Subject Offerings" value=active_offerings %}
+        {% include 'components/stat_card.html' with label="Upcoming Exams" value=upcoming_exams %}
+    </div>
+</div>
+
+<div class="dashboard-section" style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 300px;">
+        <div class="section-header">
+            <h2 class="section-title">Recent Students</h2>
+            <a href="#" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">View All</a>
+        </div>
+        <div class="data-list">
+            {% for student in recent_students %}
+            <div class="data-item">
+                <div>
+                    <div class="data-main">{{ student.user.get_full_name|default:student.user.email }}</div>
+                    <div class="data-sub">{{ student.enrollment_no }}</div>
+                </div>
+                <div class="data-meta">
+                    <a href="#" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Detail</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="data-item"><div class="data-main" style="color: var(--muted);">No students found.</div></div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div style="flex: 1; min-width: 300px;">
+        <div class="section-header">
+            <h2 class="section-title">Recent Faculty</h2>
+            <a href="#" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">View All</a>
+        </div>
+        <div class="data-list">
+            {% for f in recent_faculty %}
+            <div class="data-item">
+                <div>
+                    <div class="data-main">{{ f.user.get_full_name|default:f.user.email }}</div>
+                    <div class="data-sub">{{ f.designation }} • {{ f.department.code|default:"No Dept" }}</div>
+                </div>
+                <div class="data-meta">
+                    <a href="#" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Detail</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="data-item"><div class="data-main" style="color: var(--muted);">No faculty found.</div></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

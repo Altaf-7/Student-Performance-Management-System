@@ -1,0 +1,41 @@
+{% extends 'admin/base.html' %}
+
+{% block page_title %}Enrollment Report{% endblock %}
+{% block page_subtitle %}Active student enrollment breakdown by program and semester{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'admin_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Department</th>
+                    <th>Course</th>
+                    <th>Batch (Academic Year)</th>
+                    <th>Semester</th>
+                    <th style="text-align: right;">Total Active Students</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in enrollments %}
+                <tr>
+                    <td>{{ item.semester__course_batch__course__department__name|default:"Unassigned" }}</td>
+                    <td>{{ item.semester__course_batch__course__name|default:"Unassigned" }}</td>
+                    <td>{{ item.semester__course_batch__academic_year|default:"N/A" }}</td>
+                    <td>Semester {{ item.semester__semester_number }}</td>
+                    <td style="text-align: right; font-weight: bold; color: #1976d2;">{{ item.total_students }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No enrollment data found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

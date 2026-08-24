@@ -3,6 +3,13 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import CheckConstraint, Q
 
+import os
+
+def validate_pdf(value):
+    ext = os.path.splitext(value.name)[1]
+    if ext.lower() != '.pdf':
+        raise ValidationError('Unsupported file extension. Only PDF files are allowed.')
+
 class Assignment(models.Model):
     class StatusChoices(models.TextChoices):
         DRAFT = 'draft', 'Draft'
@@ -16,7 +23,7 @@ class Assignment(models.Model):
     maximum_marks = models.DecimalField(max_digits=5, decimal_places=2)
     assigned_at = models.DateTimeField(default=timezone.now)
     due_datetime = models.DateTimeField()
-    file_url = models.URLField(max_length=500, blank=True, null=True)
+    file_attachment = models.FileField(upload_to='assignments/', blank=True, null=True, validators=[validate_pdf])
     status = models.CharField(max_length=15, choices=StatusChoices.choices, default=StatusChoices.DRAFT)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -47,7 +54,7 @@ class AssignmentSubmission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='submissions')
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='submissions')
     submitted_at = models.DateTimeField(auto_now_add=True)
-    file_url = models.URLField(max_length=500, blank=True, null=True)
+    submission_file = models.FileField(upload_to='submissions/', blank=True, null=True, validators=[validate_pdf])
     marks_awarded = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     graded_at = models.DateTimeField(blank=True, null=True)
     feedback = models.TextField(blank=True, null=True)

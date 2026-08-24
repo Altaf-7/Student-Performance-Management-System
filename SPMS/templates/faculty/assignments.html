@@ -1,0 +1,53 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Assignments{% endblock %}
+{% block page_subtitle %}Manage assignments across all your offerings{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+        <a href="{% url 'faculty:assignment_create' %}" class="btn btn-primary">Create Assignment</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Max Marks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr>
+                    <td>{{ assignment.title }}</td>
+                    <td>{{ assignment.offering.subject.code }}</td>
+                    <td>{{ assignment.due_datetime|date:"d M Y, H:i" }}</td>
+                    <td>
+                        <span style="font-weight: 500; {% if assignment.status == 'active' %}color: #2e7d32;{% elif assignment.status == 'closed' %}color: #d32f2f;{% else %}color: var(--muted);{% endif %}">
+                            {{ assignment.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ assignment.maximum_marks }}</td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="{% url 'faculty:assignment_detail' pk=assignment.id %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">View</a>
+                            <a href="{% url 'faculty:assignment_update' pk=assignment.id %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Edit</a>
+                            <a href="{% url 'faculty:submissions' assignment_id=assignment.id %}" class="btn btn-primary" style="padding: 4px 8px; font-size: 11px;">Submissions</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center" style="color: var(--muted); padding: 20px;">No assignments have been created yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

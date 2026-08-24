@@ -1,0 +1,36 @@
+{% extends 'student/base.html' %}
+{% block title %}Attendance: {{ offering.subject.code }} | SPMS{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Attendance: {{ offering.subject.name }}</h1>
+    <p>Lecture-wise attendance breakdown.</p>
+</div>
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attendance in attendances %}
+            <tr>
+                <td>{{ attendance.lecture.date }}</td>
+                <td>{{ attendance.lecture.start_time }}</td>
+                <td>{{ attendance.lecture.end_time }}</td>
+                <td>
+                    <span class="badge {% if attendance.status == 'present' %}badge-success{% else %}badge-error{% endif %}">
+                        {{ attendance.get_status_display }}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="empty-state">No attendance records found for this subject.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

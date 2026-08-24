@@ -1,0 +1,35 @@
+{% extends 'student/base.html' %}
+{% block title %}Semester Details | SPMS{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Semester {{ student_semester.semester.semester_number }}</h1>
+    <p>{{ student_semester.semester.course_batch.course.name }} ({{ student_semester.academic_year }})</p>
+</div>
+<div class="card">
+    <h2>Subjects in this Semester</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Subject Name</th>
+                <th>Type</th>
+                <th>Credits</th>
+                <th>Faculty</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for offering in offerings %}
+            <tr>
+                <td>{{ offering.subject.code }}</td>
+                <td><a href="{% url 'students:subject_detail' offering.id %}" class="text-link">{{ offering.subject.name }}</a></td>
+                <td>{{ offering.get_subject_type_display }}</td>
+                <td>{{ offering.credits }}</td>
+                <td>{{ offering.faculty.user.get_full_name|default:offering.faculty.user.email|default:"Not Assigned" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="empty-state">No subjects found for this semester.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

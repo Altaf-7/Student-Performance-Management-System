@@ -1,0 +1,37 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Assigned Subjects{% endblock %}
+{% block page_subtitle %}Subjects and courses you are assigned to teach{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="data-list">
+        {% for offering in offerings %}
+        <div class="data-item">
+            <div>
+                <div class="data-main">
+                    <a href="{% url 'faculty:subject_detail' pk=offering.pk %}" style="text-decoration: none; color: inherit;">
+                        {{ offering.subject.name }} ({{ offering.subject.code }})
+                    </a>
+                </div>
+                <div class="data-sub">
+                    Course: {{ offering.semester.course_batch.course.name }} • 
+                    Batch: {{ offering.semester.course_batch.academic_year }} • 
+                    Semester: {{ offering.semester.semester_number }}
+                </div>
+                <div class="data-sub" style="margin-top: 5px;">
+                    Type: {{ offering.get_subject_type_display }} • Credits: {{ offering.credits }}
+                </div>
+            </div>
+            <div class="data-meta">
+                <a href="{% url 'faculty:subject_detail' pk=offering.pk %}" class="btn btn-secondary">View Detail</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="data-item">
+            <div class="data-main" style="color: var(--muted);">You currently have no assigned subjects.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Enter Exam Results{% endblock %}
+{% block page_subtitle %}{{ exam.get_exam_term_display }} - {{ exam.get_exam_category_display }} (Max Marks: {{ exam.total_marks }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty:exam_detail' pk=exam.pk %}" class="btn btn-secondary">&larr; Back to Exam</a>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Enrollment No</th>
+                        <th>Student Name</th>
+                        <th style="width: 150px;">Attendance Status</th>
+                        <th style="width: 150px;">Marks Obtained</th>
+                        <th style="width: 80px;">Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in student_data %}
+                    <tr>
+                        <td>{{ item.student.enrollment_no }}</td>
+                        <td>{{ item.student.user.get_full_name|default:"--" }}</td>
+                        <td>
+                            <select name="attendance_{{ item.student.id }}" class="form-control" onchange="toggleMarksInput(this, 'marks_{{ item.student.id }}')">
+                                {% for val, label in attendance_choices %}
+                                <option value="{{ val }}" {% if item.attendance_status == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" name="marks_{{ item.student.id }}" id="marks_{{ item.student.id }}" class="form-control" value="{{ item.marks_obtained|default_if_none:'' }}" max="{{ exam.total_marks }}" min="0" {% if item.attendance_status != 'present' %}disabled{% endif %} {% if exam.status == 'published' %}readonly{% endif %}>
+                        </td>
+                        <td style="font-weight: 500;">
+                            {{ item.grade|default:"--" }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--muted); padding: 20px;">No students are enrolled in this semester.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if student_data and exam.status != 'published' %}
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary">Save Results</button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<script>
+function toggleMarksInput(selectElement, inputId) {
+    var inputElement = document.getElementById(inputId);
+    if (selectElement.value === 'present') {
+        inputElement.disabled = false;
+    } else {
+        inputElement.disabled = true;
+        inputElement.value = ''; // clear value if absent
+    }
+}
+</script>
+{% endblock %}

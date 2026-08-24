@@ -1,0 +1,49 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Semester Reports{% endblock %}
+{% block page_subtitle %}Your overall performance per semester{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'student_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Semester</th>
+                    <th>Academic Year</th>
+                    <th style="text-align: right;">Total Marks</th>
+                    <th style="text-align: right;">Obtained Marks</th>
+                    <th style="text-align: right;">SGPA</th>
+                    <th style="text-align: right;">Status</th>
+                    <th style="text-align: right;">Declaration Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>Semester {{ report.semester.semester_number }}</td>
+                    <td>{{ report.academic_year }}</td>
+                    <td style="text-align: right;">{{ report.total_marks }}</td>
+                    <td style="text-align: right;">{{ report.obtained_marks }}</td>
+                    <td style="text-align: right; font-weight: bold; color: #1976d2;">{{ report.sgpa }}</td>
+                    <td style="text-align: right;">
+                        <span style="font-weight: 500; {% if report.result_status == 'Pass' %}color: #2e7d32;{% elif report.result_status == 'Fail' %}color: #d32f2f;{% else %}color: #f57c00;{% endif %}">
+                            {{ report.result_status }}
+                        </span>
+                    </td>
+                    <td style="text-align: right; color: var(--muted); font-size: 13px;">{{ report.created_at|date:"d M Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--muted); padding: 20px;">No semester reports generated yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

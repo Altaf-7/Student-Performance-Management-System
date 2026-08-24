@@ -1,0 +1,73 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Assignment Report{% endblock %}
+{% block page_subtitle %}Your assignment submissions and performance{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'student_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Total Assignments</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">{{ summary.total }}</div>
+        </div>
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Submitted</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: #2e7d32;">{{ summary.submitted }}</div>
+        </div>
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Not Submitted</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: #d32f2f;">{{ summary.not_submitted }}</div>
+        </div>
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Submission Rate</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: #1976d2;">{{ summary.submission_rate }}%</div>
+        </div>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Assignment Title</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in assignment_report %}
+                <tr>
+                    <td>{{ item.subject.name }}</td>
+                    <td>{{ item.assignment.title }}</td>
+                    <td>{{ item.assignment.due_date|date:"d M Y" }}</td>
+                    <td>
+                        <span style="font-weight: 500; {% if item.status == 'Submitted' %}color: #2e7d32;{% elif item.status == 'Late' %}color: #f57c00;{% else %}color: #d32f2f;{% endif %}">
+                            {{ item.status }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        {% if item.graded %}
+                            <strong>{{ item.marks }}</strong> / {{ item.max_marks }}
+                        {% elif item.status != 'Not Submitted' %}
+                            <span style="color: var(--muted); font-size: 12px;">Pending Grading</span>
+                        {% else %}
+                            --
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No assignment data available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

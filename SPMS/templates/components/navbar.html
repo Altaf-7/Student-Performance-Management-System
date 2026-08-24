@@ -1,8 +1,7 @@
 <header class="navbar">
     <a href="{% url 'landing_page' %}" class="brand" aria-label="SPMS home">
-        <span class="brand-mark" aria-hidden="true">
-            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-        </span>
+        <span class="brand-mark"></span>
+        SPMS
     </a>
     
     <button class="menu-toggle" id="mobile-menu-btn" aria-label="Toggle menu">
@@ -17,8 +16,12 @@
                 <button type="submit" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;font-weight:inherit;color:inherit;" class="nav-links a">Logout</button>
             </form>
         {% else %}
-            <a href="{% url 'accounts:login' %}">Login</a>
-            <a href="{% url 'accounts:signup' %}">Register</a>
+            {% if request.resolver_match.url_name != 'login' %}
+                <a href="{% url 'accounts:login' %}">Login</a>
+            {% endif %}
+            {% if request.resolver_match.url_name != 'signup' %}
+                <a href="{% url 'accounts:signup' %}">Register</a>
+            {% endif %}
         {% endif %}
     </nav>
 </header>

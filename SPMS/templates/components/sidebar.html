@@ -1,21 +1,36 @@
 <aside class="sidebar">
-    {% if request.user.role == 'student' %}
+    {% if request.user.role == 'admin' or request.user.is_superuser %}
         <div class="sidebar-section">
-            <div class="sidebar-heading">Academic</div>
+            <div class="sidebar-heading">System</div>
             <nav class="sidebar-nav">
-                <a href="{% url 'students:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="#" class="sidebar-link">Subjects</a>
-                <a href="#" class="sidebar-link">Attendance</a>
-                <a href="#" class="sidebar-link">Assignments</a>
-                <a href="#" class="sidebar-link">Exams</a>
-                <a href="#" class="sidebar-link">Results</a>
+                <a href="{% url 'spms_admin:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="{% url 'spms_admin:users' %}" class="sidebar-link {% if request.resolver_match.url_name == 'users' or request.resolver_match.url_name == 'user_detail' %}active{% endif %}">Users</a>
+                <a href="{% url 'spms_admin:students' %}" class="sidebar-link {% if request.resolver_match.url_name == 'students' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">Students</a>
+                <a href="{% url 'spms_admin:faculty_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'faculty_list' or request.resolver_match.url_name == 'faculty_detail' %}active{% endif %}">Faculty</a>
+            </nav>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Institution</div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'spms_admin:department_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'department_list' %}active{% endif %}">Departments</a>
+                <a href="{% url 'spms_admin:course_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'course_list' %}active{% endif %}">Courses</a>
+                <a href="{% url 'spms_admin:batch_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'batch_list' %}active{% endif %}">Batches</a>
+                <a href="{% url 'spms_admin:semester_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'semester_list' %}active{% endif %}">Semesters</a>
+                <a href="{% url 'spms_admin:subject_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subject_list' %}active{% endif %}">Subjects</a>
+                <a href="{% url 'spms_admin:offering_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'offering_list' %}active{% endif %}">Subject Offerings</a>
+            </nav>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Reports & Analytics</div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'admin_reports:dashboard' %}" class="sidebar-link {% if request.resolver_match.app_name == 'admin_reports' %}active{% endif %}">Reports Dashboard</a>
             </nav>
         </div>
         <div class="sidebar-section">
             <div class="sidebar-heading">Account</div>
             <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link">Profile</a>
-                <a href="{% url 'accounts:change_password' %}" class="sidebar-link">Settings</a>
+                <a href="{% url 'spms_admin:profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+                <a href="{% url 'accounts:change_password' %}" class="sidebar-link {% if request.resolver_match.url_name == 'change_password' %}active{% endif %}">Settings</a>
             </nav>
         </div>
     {% elif request.user.role == 'faculty' %}
@@ -23,48 +38,47 @@
             <div class="sidebar-heading">Academic</div>
             <nav class="sidebar-nav">
                 <a href="{% url 'faculty:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="#" class="sidebar-link">Subjects</a>
-                <a href="#" class="sidebar-link">Students</a>
-                <a href="#" class="sidebar-link">Lectures</a>
-                <a href="#" class="sidebar-link">Attendance</a>
-                <a href="#" class="sidebar-link">Assignments</a>
-                <a href="#" class="sidebar-link">Exams</a>
-                <a href="#" class="sidebar-link">Performance</a>
+                <a href="{% url 'faculty:subjects' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subjects' or request.resolver_match.url_name == 'subject_detail' or request.resolver_match.url_name == 'students' or request.resolver_match.url_name == 'lectures' or request.resolver_match.url_name == 'lecture_detail' or request.resolver_match.url_name == 'lecture_create' or request.resolver_match.url_name == 'lecture_update' or request.resolver_match.url_name == 'attendance_entry' or request.resolver_match.url_name == 'attendance_summary' %}active{% endif %}">Subjects</a>
+                <a href="{% url 'faculty:assignments' %}" class="sidebar-link {% if request.resolver_match.url_name == 'assignments' or request.resolver_match.url_name == 'assignment_detail' or request.resolver_match.url_name == 'assignment_create' or request.resolver_match.url_name == 'submissions' or request.resolver_match.url_name == 'submission_detail' %}active{% endif %}">Assignments</a>
+                <a href="{% url 'faculty:exams' %}" class="sidebar-link {% if request.resolver_match.url_name == 'exams' or request.resolver_match.url_name == 'exam_detail' or request.resolver_match.url_name == 'exam_create' or request.resolver_match.url_name == 'exam_results' %}active{% endif %}">Exams</a>
+            </nav>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-heading">Reports & Analytics</div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'faculty_reports:dashboard' %}" class="sidebar-link {% if request.resolver_match.app_name == 'faculty_reports' %}active{% endif %}">Reports Dashboard</a>
             </nav>
         </div>
         <div class="sidebar-section">
             <div class="sidebar-heading">Account</div>
             <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link">Profile</a>
-                <a href="{% url 'accounts:change_password' %}" class="sidebar-link">Settings</a>
+                <a href="{% url 'faculty:profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+                <a href="{% url 'accounts:change_password' %}" class="sidebar-link {% if request.resolver_match.url_name == 'change_password' %}active{% endif %}">Settings</a>
             </nav>
         </div>
-    {% elif request.user.role == 'admin' or request.user.is_superuser %}
+    {% elif request.user.role == 'student' %}
         <div class="sidebar-section">
-            <div class="sidebar-heading">System</div>
+            <div class="sidebar-heading">Academic</div>
             <nav class="sidebar-nav">
-                <a href="{% url 'accounts:admin_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="#" class="sidebar-link">Users</a>
-                <a href="#" class="sidebar-link">Students</a>
-                <a href="#" class="sidebar-link">Faculty</a>
+                <a href="{% url 'students:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="{% url 'students:subjects' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subjects' %}active{% endif %}">Subjects</a>
+                <a href="{% url 'students:attendance_summary' %}" class="sidebar-link {% if request.resolver_match.url_name == 'attendance_summary' %}active{% endif %}">Attendance</a>
+                <a href="{% url 'students:assignments' %}" class="sidebar-link {% if request.resolver_match.url_name == 'assignments' %}active{% endif %}">Assignments</a>
+                <a href="{% url 'students:exams' %}" class="sidebar-link {% if request.resolver_match.url_name == 'exams' %}active{% endif %}">Exams</a>
+                <a href="{% url 'students:results' %}" class="sidebar-link {% if request.resolver_match.url_name == 'results' %}active{% endif %}">Results</a>
             </nav>
         </div>
         <div class="sidebar-section">
-            <div class="sidebar-heading">Institution</div>
+            <div class="sidebar-heading">Reports & Analytics</div>
             <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link">Departments</a>
-                <a href="#" class="sidebar-link">Courses</a>
-                <a href="#" class="sidebar-link">Batches</a>
-                <a href="#" class="sidebar-link">Semesters</a>
-                <a href="#" class="sidebar-link">Subjects</a>
-                <a href="#" class="sidebar-link">Subject Offerings</a>
+                <a href="{% url 'student_reports:dashboard' %}" class="sidebar-link {% if request.resolver_match.app_name == 'student_reports' %}active{% endif %}">Reports Dashboard</a>
             </nav>
         </div>
         <div class="sidebar-section">
             <div class="sidebar-heading">Account</div>
             <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link">Reports</a>
-                <a href="{% url 'accounts:change_password' %}" class="sidebar-link">Settings</a>
+                <a href="{% url 'students:profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+                <a href="{% url 'accounts:change_password' %}" class="sidebar-link {% if request.resolver_match.url_name == 'change_password' %}active{% endif %}">Settings</a>
             </nav>
         </div>
     {% endif %}

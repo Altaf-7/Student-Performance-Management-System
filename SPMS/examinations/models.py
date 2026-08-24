@@ -17,6 +17,8 @@ class Exam(models.Model):
     class StatusChoices(models.TextChoices):
         SCHEDULED = 'scheduled', 'Scheduled'
         COMPLETED = 'completed', 'Completed'
+        RESULTS_PENDING = 'results_pending', 'Results Pending'
+        PUBLISHED = 'published', 'Published'
         CANCELLED = 'cancelled', 'Cancelled'
 
     offering = models.ForeignKey('academics.SubjectOffering', on_delete=models.CASCADE, related_name='exams')

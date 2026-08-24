@@ -1,0 +1,47 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}My Examinations{% endblock %}
+{% block page_subtitle %}View your scheduled and completed exams{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Exam Term</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Total Marks</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam in exams %}
+                <tr>
+                    <td>{{ exam.offering.subject.name }} ({{ exam.offering.subject.code }})</td>
+                    <td>{{ exam.get_exam_term_display }}</td>
+                    <td>{{ exam.get_exam_category_display }}</td>
+                    <td>{{ exam.exam_date|date:"d M Y" }}</td>
+                    <td>{{ exam.total_marks }}</td>
+                    <td>
+                        <span style="font-weight: 500; {% if exam.status == 'published' %}color: #2e7d32;{% elif exam.status == 'scheduled' %}color: #1976d2;{% else %}color: #f57c00;{% endif %}">
+                            {{ exam.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'students:exam_detail' pk=exam.id %}" class="btn btn-primary" style="padding: 4px 8px; font-size: 11px;">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center" style="color: var(--muted); padding: 20px;">No exams available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

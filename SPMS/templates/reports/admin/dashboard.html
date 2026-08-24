@@ -1,0 +1,58 @@
+{% extends 'admin/base.html' %}
+
+{% block page_title %}Admin Reports & Analytics{% endblock %}
+{% block page_subtitle %}System-wide academic overview and insights{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="stat-card" style="padding: 20px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 13px; text-transform: uppercase;">Total Students</div>
+            <div style="font-size: 24px; font-weight: bold; margin-top: 10px; color: #1976d2;">
+                {{ overview.total_students }}
+            </div>
+        </div>
+        <div class="stat-card" style="padding: 20px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 13px; text-transform: uppercase;">Total Faculty</div>
+            <div style="font-size: 24px; font-weight: bold; margin-top: 10px; color: #1976d2;">
+                {{ overview.total_faculty }}
+            </div>
+        </div>
+        <div class="stat-card" style="padding: 20px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 13px; text-transform: uppercase;">Departments</div>
+            <div style="font-size: 24px; font-weight: bold; margin-top: 10px; color: #1976d2;">
+                {{ overview.total_departments }}
+            </div>
+        </div>
+        <div class="stat-card" style="padding: 20px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 13px; text-transform: uppercase;">Courses</div>
+            <div style="font-size: 24px; font-weight: bold; margin-top: 10px; color: #1976d2;">
+                {{ overview.total_courses }}
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <!-- Detailed Reports Links -->
+        <div class="form-container" style="flex: 1;">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">Operational Reports</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="margin-bottom: 10px;"><a href="{% url 'admin_reports:enrollment' %}" style="text-decoration: none; color: #1976d2; display: flex; align-items: center;"><span style="margin-right: 10px;">📈</span> Enrollment Report</a></li>
+                <li style="margin-bottom: 10px;"><a href="{% url 'admin_reports:departments' %}" style="text-decoration: none; color: #1976d2; display: flex; align-items: center;"><span style="margin-right: 10px;">🏢</span> Department Report</a></li>
+                <li style="margin-bottom: 10px;"><a href="{% url 'admin_reports:courses' %}" style="text-decoration: none; color: #1976d2; display: flex; align-items: center;"><span style="margin-right: 10px;">📚</span> Course Report</a></li>
+                <li style="margin-bottom: 10px;"><a href="{% url 'admin_reports:batches' %}" style="text-decoration: none; color: #1976d2; display: flex; align-items: center;"><span style="margin-right: 10px;">👥</span> Batch Report</a></li>
+                <li style="margin-bottom: 10px;"><a href="{% url 'admin_reports:semesters' %}" style="text-decoration: none; color: #1976d2; display: flex; align-items: center;"><span style="margin-right: 10px;">📅</span> Semester Report</a></li>
+                <li style="margin-bottom: 10px;"><a href="{% url 'admin_reports:offerings' %}" style="text-decoration: none; color: #1976d2; display: flex; align-items: center;"><span style="margin-right: 10px;">📖</span> Subject Offering Report</a></li>
+            </ul>
+        </div>
+        
+        <!-- Analytics Link -->
+        <div class="form-container" style="flex: 1;">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">Analytics & Insights</h3>
+            <p style="color: var(--text-color); margin-bottom: 15px;">View system-wide trends, academic monitoring, and identify at-risk students.</p>
+            <a href="{% url 'admin_reports:analytics' %}" class="btn btn-primary" style="width: 100%; text-align: center; margin-bottom: 10px;">View Analytics Dashboard</a>
+            <a href="{% url 'admin_reports:at_risk' %}" class="btn btn-secondary" style="width: 100%; text-align: center;">⚠️ Academic Monitoring (At-Risk)</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-{%load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,100 +7,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Student Performance Management System - a modern platform for managing academic performance, attendance, assignments and examinations.">
-    <title>Student Performance Management System</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>SPMS | Elevate Academic Performance</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}?v=3.0">
 </head>
 
 <body>
     <header class="navbar">
         <a href="#" class="brand" aria-label="SPMS home">
-            <span class="brand-mark" aria-hidden="true">
-                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-            </span>
+            <span class="brand-mark"></span>
+            SPMS
         </a>
 
         <nav class="nav-links" aria-label="Main navigation">
             <a href="#features">Features</a>
-            <a href="#resources">Resources</a>
-            <a href="#about">About</a>
+            <a href="{% url 'accounts:login' %}">Login</a>
         </nav>
     </header>
 
     <main>
         <section class="hero" id="home">
+            <img src="{% static 'hero_bg.jpg' %}" alt="Abstract Background" class="hero-bg">
             <div class="hero-content">
-                <p class="eyebrow">STUDENT PERFORMANCE MANAGEMENT SYSTEM</p>
-                <h1>Track performance.<br>Build better outcomes.</h1>
+                <p class="eyebrow">Student Performance Management</p>
+                <h1>Track performance.<br><span class="gradient-text">Build better outcomes.</span></h1>
                 <p class="hero-copy">
-                    A centralized academic platform to manage attendance, assignments,
-                    examinations and student performance in one place.
+                    A centralized, intelligent academic platform to seamlessly manage attendance, assignments, examinations, and student success in one place.
                 </p>
 
                 <div class="hero-actions">
-                    <a class="btn btn-primary" href="#features">Explore system</a>
-                    <a class="btn btn-secondary" href="#about">Learn more</a>
+                    <a class="btn btn-primary" href="{% url 'accounts:login' %}">Get Started</a>
+                    <a class="btn btn-secondary" href="#features">Explore Features</a>
                 </div>
             </div>
         </section>
 
-        <section class="features" id="features">
+        <section class="features section-padding" id="features">
             <div class="section-heading">
-                <span>01</span>
+                <span class="section-label">THE PLATFORM</span>
                 <h2>Everything academic, connected.</h2>
             </div>
 
             <div class="feature-grid">
-                <article class="feature-card">
-                    <span class="card-number">01</span>
+                <article class="feature-card glass-panel">
+                    <div class="card-icon">📊</div>
                     <h3>Student Performance</h3>
-                    <p>View marks, semester results, SGPA and academic progress from a single dashboard.</p>
+                    <p>View comprehensive insights into marks, semester results, SGPA, and track academic progress across terms from a single, unified dashboard.</p>
                 </article>
 
-                <article class="feature-card">
-                    <span class="card-number">02</span>
-                    <h3>Attendance</h3>
-                    <p>Record and monitor lecture attendance with clear student and faculty workflows.</p>
+                <article class="feature-card glass-panel">
+                    <div class="card-icon">✔️</div>
+                    <h3>Attendance Tracking</h3>
+                    <p>Effortlessly record and monitor lecture attendance with clear, intuitive workflows designed for both students and faculty members.</p>
                 </article>
 
-                <article class="feature-card">
-                    <span class="card-number">03</span>
+                <article class="feature-card glass-panel">
+                    <div class="card-icon">📝</div>
                     <h3>Assignments & Exams</h3>
-                    <p>Manage assignments, submissions, examinations, grading and result history.</p>
+                    <p>Streamline the entire examination and assignment lifecycle. Manage submissions, implement grading criteria, and maintain historical result data securely.</p>
                 </article>
-            </div>
-        </section>
-
-        <section class="about" id="about">
-            <div>
-                <span class="section-label">02 — ABOUT</span>
-                <h2>One system for the complete academic journey.</h2>
-            </div>
-            <p>
-                SPMS connects students, faculty and administrators through a structured
-                academic workflow—from courses and semesters to attendance, assignments,
-                examinations and graduation.
-            </p>
-        </section>
-
-        <section class="resources" id="resources">
-            <div class="resource-content">
-                <span class="section-label">03 — RESOURCES</span>
-                <h2>Make academic data easier to understand.</h2>
-                <p>
-                    Designed to turn scattered academic records into useful, accessible
-                    information for better decisions and better performance.
-                </p>
-                <a class="text-link" href="#home">Back to top <span>↗</span></a>
             </div>
         </section>
     </main>
 
     <footer>
-        <span>© <span id="year"></span> SPMS</span>
-        <span>Student Performance Management System</span>
+        <span>© <span id="year"></span> SPMS Inc.</span>
+        <span>Empowering Education</span>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 
 </html>

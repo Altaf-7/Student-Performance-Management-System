@@ -1,9 +1,72 @@
 {% if messages %}
     <div class="messages">
         {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                {{ message }}
-            </div>
+            {% if "credentials_modal" in message.tags %}
+                <div id="credentialsModal-{{ forloop.counter }}" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
+                    <div style="background:var(--bg, white); padding:30px; border-radius:8px; width:450px; max-width:90%; box-shadow:0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--line, #ccc);">
+                        <h3 style="margin-top:0; font-size:18px; margin-bottom:10px;">User Created Successfully</h3>
+                        <p style="color:var(--muted, #666); font-size:14px; margin-bottom:20px;">Please copy the temporary credentials below and share them securely with the user.</p>
+                        
+                        <div style="background:var(--soft, #f5f5f5); padding:20px; border-radius:6px; margin-bottom:20px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                                <div>
+                                    <span style="font-size:12px; color:var(--muted, #666); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">Email Address</span>
+                                    <strong id="credEmail-{{ forloop.counter }}" style="font-size:15px; user-select:all;"></strong>
+                                </div>
+                                <button onclick="copyIndividual('credEmail-{{ forloop.counter }}')" style="padding:6px 12px; background:var(--bg, white); border:1px solid var(--line, #ccc); border-radius:4px; cursor:pointer; font-size:12px; font-weight:500;">Copy Email</button>
+                            </div>
+                            
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <span style="font-size:12px; color:var(--muted, #666); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">Temporary Password</span>
+                                    <strong id="credPassword-{{ forloop.counter }}" style="font-size:15px; user-select:all; font-family:monospace;"></strong>
+                                </div>
+                                <button onclick="copyIndividual('credPassword-{{ forloop.counter }}')" style="padding:6px 12px; background:var(--bg, white); border:1px solid var(--line, #ccc); border-radius:4px; cursor:pointer; font-size:12px; font-weight:500;">Copy Password</button>
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex; justify-content:flex-end;">
+                            <button onclick="document.getElementById('credentialsModal-{{ forloop.counter }}').style.display='none'" style="padding:10px 20px; background:var(--black, #000); color:white; border:none; border-radius:4px; cursor:pointer; font-size:13px; font-weight:500;">Done</button>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    (function() {
+                        var rawMsg = "{{ message|escapejs }}";
+                        var parts = rawMsg.split('|');
+                        var email = parts[0] ? parts[0].trim() : '';
+                        var password = parts[1] ? parts[1].trim() : '';
+                        document.getElementById('credEmail-{{ forloop.counter }}').textContent = email;
+                        document.getElementById('credPassword-{{ forloop.counter }}').textContent = password;
+                    })();
+                    
+                    if (typeof copyIndividual !== 'function') {
+                        window.copyIndividual = function(elementId) {
+                            var textToCopy = document.getElementById(elementId).textContent;
+                            navigator.clipboard.writeText(textToCopy).then(function() {
+                                var btn = event.target;
+                                var originalText = btn.textContent;
+                                btn.textContent = 'Copied!';
+                                btn.style.background = '#e6f4ea';
+                                btn.style.borderColor = '#c6e3d2';
+                                btn.style.color = '#137333';
+                                setTimeout(function() {
+                                    btn.textContent = originalText;
+                                    btn.style.background = 'var(--bg, white)';
+                                    btn.style.borderColor = 'var(--line, #ccc)';
+                                    btn.style.color = 'var(--text, #333)';
+                                }, 2000);
+                            }).catch(function(err) {
+                                alert("Failed to copy text: " + err);
+                            });
+                        };
+                    }
+                </script>
+            {% else %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 {% endif %}

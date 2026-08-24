@@ -1,0 +1,45 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Semester Reports{% endblock %}
+{% block page_subtitle %}Consolidated academic reports for completed semesters{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Semester</th>
+                    <th>Academic Year</th>
+                    <th>Total Marks</th>
+                    <th>Obtained Marks</th>
+                    <th>SGPA</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.semester.course_batch.course.code }}</td>
+                    <td>Semester {{ report.semester.semester_number }}</td>
+                    <td>{{ report.academic_year }}</td>
+                    <td>{{ report.total_marks }}</td>
+                    <td>{{ report.obtained_marks }}</td>
+                    <td style="font-weight: bold; color: #1976d2;">{{ report.sgpa }}</td>
+                    <td>
+                        <span style="font-weight: 500; {% if report.result_status == 'Pass' %}color: #2e7d32;{% else %}color: #d32f2f;{% endif %}">
+                            {{ report.result_status }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center" style="color: var(--muted); padding: 20px;">No semester reports generated yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Faculty Profile{% endblock %}
+{% block page_subtitle %}Manage your personal information and settings{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Profile Information</h2>
+    </div>
+    <form method="post" class="form-container" style="max-width: 600px;">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 20px;">
+            <p><strong>Name:</strong> {{ request.user.get_full_name }}</p>
+            <p><strong>Email:</strong> {{ request.user.email }}</p>
+            <p><strong>Department:</strong> {{ request.user.faculty_profile.department.name|default:"Not Assigned" }}</p>
+            <p><strong>Designation:</strong> {{ request.user.faculty_profile.designation }}</p>
+            <p><strong>Date of Joining:</strong> {{ request.user.faculty_profile.date_of_join|default:"Not Set" }}</p>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.office_email.id_for_label }}">Office Email</label>
+            {{ form.office_email }}
+            {% if form.office_email.errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.office_email.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.office_contact.id_for_label }}">Office Contact</label>
+            {{ form.office_contact }}
+            {% if form.office_contact.errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.office_contact.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.specialization.id_for_label }}">Specialization</label>
+            {{ form.specialization }}
+            {% if form.specialization.errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.specialization.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.qualification.id_for_label }}">Qualification</label>
+            {{ form.qualification }}
+            {% if form.qualification.errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.qualification.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

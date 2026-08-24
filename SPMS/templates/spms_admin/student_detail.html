@@ -1,0 +1,57 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}Student Details{% endblock %}
+{% block page_subtitle %}{{ student.user.get_full_name }} ({{ student.enrollment_no }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'spms_admin:students' %}" class="btn btn-secondary">&larr; Back to Students</a>
+        <a href="{% url 'spms_admin:user_detail' pk=student.user.pk %}" class="btn btn-secondary">Manage Account</a>
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <!-- Profile info -->
+        <div class="form-container" style="flex: 1; min-width: 300px;">
+            <h3 style="margin-bottom: 15px; font-size: 16px;">Personal Information</h3>
+            <p><strong>Name:</strong> {{ student.user.get_full_name }}</p>
+            <p><strong>Email:</strong> {{ student.user.email }}</p>
+            <p><strong>Contact:</strong> {{ student.user.contact_number|default:"--" }}</p>
+            <p><strong>DOB:</strong> {{ student.date_of_birth|default:"--" }}</p>
+            <p><strong>Gender:</strong> {{ student.get_gender_display|default:"--" }}</p>
+            <p><strong>Address:</strong> {{ student.address|default:"--" }}</p>
+            <p><strong>Guardian:</strong> {{ student.guardian_name|default:"--" }} ({{ student.guardian_contact|default:"--" }})</p>
+        </div>
+
+        <!-- Academic info -->
+        <div style="flex: 1; min-width: 300px;">
+            <div class="form-container" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; font-size: 16px;">Course History</h3>
+                {% for sc in courses %}
+                    <div style="padding: 10px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-color); margin-bottom: 10px;">
+                        <p><strong>{{ sc.course.name }} ({{ sc.course.code }})</strong></p>
+                        <p>Batch: {{ sc.course_batch.academic_year }}</p>
+                        <p>Admission: {{ sc.admission_year }}</p>
+                        <p>Status: <span style="text-transform: capitalize;">{{ sc.status }}</span></p>
+                    </div>
+                {% empty %}
+                    <p class="muted">No course enrollment records.</p>
+                {% endfor %}
+            </div>
+
+            <div class="form-container">
+                <h3 style="margin-bottom: 15px; font-size: 16px;">Semester History</h3>
+                {% for sem in semesters %}
+                    <div style="padding: 10px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-color); margin-bottom: 10px;">
+                        <p><strong>Semester {{ sem.semester.semester_number }}</strong> ({{ sem.semester.course_batch.course.code }})</p>
+                        <p>Academic Year: {{ sem.academic_year }}</p>
+                        <p>Status: <span style="text-transform: capitalize;">{{ sem.status }}</span></p>
+                    </div>
+                {% empty %}
+                    <p class="muted">No semester records.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

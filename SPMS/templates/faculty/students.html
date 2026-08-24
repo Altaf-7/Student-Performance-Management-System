@@ -1,0 +1,45 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Enrolled Students{% endblock %}
+{% block page_subtitle %}{{ offering.subject.name }} ({{ offering.semester.course_batch.course.code }} Batch {{ offering.semester.course_batch.academic_year }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty:subject_detail' pk=offering.pk %}" class="btn btn-secondary">&larr; Back to Subject</a>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Enrollment No</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student_semester in students %}
+                <tr>
+                    <td>{{ student_semester.student.enrollment_no }}</td>
+                    <td>{{ student_semester.student.user.get_full_name|default:"--" }}</td>
+                    <td>{{ student_semester.student.user.email }}</td>
+                    <td>
+                        {% if student_semester.status == 'active' %}
+                        <span style="color: #2e7d32;">Active</span>
+                        {% else %}
+                        <span style="color: #ed6c02;">Backlog</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--muted); padding: 20px;">No students are currently enrolled in this semester.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
