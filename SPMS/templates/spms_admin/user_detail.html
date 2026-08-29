@@ -1,0 +1,54 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}User Detail{% endblock %}
+{% block page_subtitle %}{{ target_user.get_full_name|default:target_user.email }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'spms_admin:users' %}" class="btn btn-secondary">&larr; Back to Users</a>
+    </div>
+
+    <div class="form-container" style="max-width: 600px;">
+        <h3 style="margin-bottom: 15px; font-size: 16px;">Account Information</h3>
+        <p><strong>Name:</strong> {{ target_user.get_full_name|default:"Not Set" }}</p>
+        <p><strong>Email:</strong> {{ target_user.email }}</p>
+        <p><strong>Role:</strong> <span style="text-transform: capitalize;">{{ target_user.role }}</span></p>
+        <p><strong>Contact:</strong> {{ target_user.contact_number|default:"--" }}</p>
+        
+        <p style="margin-top: 15px;"><strong>Status:</strong> 
+            {% if target_user.is_active %}
+                <span style="color: #2e7d32; font-weight: bold;">Active</span>
+            {% else %}
+                <span style="color: #d32f2f; font-weight: bold;">Inactive</span>
+            {% endif %}
+        </p>
+        
+        <p style="margin-top: 15px;"><strong>Created At:</strong> {{ target_user.date_joined }}</p>
+        <p><strong>Last Updated:</strong> {{ target_user.updated_at }}</p>
+        <p><strong>Last Login:</strong> {{ target_user.last_login|default:"Never" }}</p>
+
+        {% if target_user.role == 'student' %}
+            <p style="margin-top: 20px;"><a href="#" class="btn btn-secondary">View Student Profile</a></p>
+        {% elif target_user.role == 'faculty' %}
+            <p style="margin-top: 20px;"><a href="#" class="btn btn-secondary">View Faculty Profile</a></p>
+        {% endif %}
+
+        {% if target_user != request.user %}
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+            <h3 style="margin-bottom: 15px; font-size: 16px;">Administrative Actions</h3>
+            <form method="post" action="{% url 'spms_admin:user_status' pk=target_user.pk %}">
+                {% csrf_token %}
+                {% if target_user.is_active %}
+                    <input type="hidden" name="action" value="deactivate">
+                    <button type="submit" class="btn btn-secondary" style="color: #d32f2f; border-color: #d32f2f;" onclick="return confirm('Are you sure you want to deactivate this user? They will not be able to log in.');">Deactivate Account</button>
+                {% else %}
+                    <input type="hidden" name="action" value="activate">
+                    <button type="submit" class="btn btn-primary" style="background: #2e7d32; border-color: #2e7d32;">Activate Account</button>
+                {% endif %}
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

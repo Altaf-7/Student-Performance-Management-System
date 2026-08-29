@@ -1,0 +1,53 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Examination Results Report{% endblock %}
+{% block page_subtitle %}Exam performance across your subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Exam</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Total Students</th>
+                    <th style="text-align: right;">Results Entered</th>
+                    <th style="text-align: right;">Pending Results</th>
+                    <th style="text-align: right;">Pass %</th>
+                    <th style="text-align: right;">Fail %</th>
+                    <th style="text-align: right;">Avg Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in reports %}
+                <tr>
+                    <td>{{ item.exam.offering.subject.name }} ({{ item.exam.offering.subject.code }})</td>
+                    <td>{{ item.exam.get_exam_term_display }} - {{ item.exam.get_exam_category_display }}</td>
+                    <td>
+                        <span style="font-weight: 500; {% if item.exam.status == 'published' %}color: #2e7d32;{% elif item.exam.status == 'scheduled' %}color: #1976d2;{% else %}color: #f57c00;{% endif %}">
+                            {{ item.exam.get_status_display }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">{{ item.total_students }}</td>
+                    <td style="text-align: right;">{{ item.results_entered }}</td>
+                    <td style="text-align: right; {% if item.pending_results > 0 %}color: #d32f2f; font-weight: bold;{% endif %}">{{ item.pending_results }}</td>
+                    <td style="text-align: right; font-weight: 500; color: #2e7d32;">{{ item.pass_percentage }}%</td>
+                    <td style="text-align: right; font-weight: 500; color: #d32f2f;">{{ item.fail_percentage }}%</td>
+                    <td style="text-align: right;">{{ item.average_marks|default:"--" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--muted); padding: 20px;">No exams found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

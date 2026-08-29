@@ -1,0 +1,34 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}{% if form.instance.pk %}Edit Lecture{% else %}Add Lecture{% endif %}{% endblock %}
+{% block page_subtitle %}For {{ offering.subject.name }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section form-container" style="max-width: 600px;">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty:lectures' offering_id=offering.id %}" class="btn btn-secondary">&larr; Back to Lectures</a>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <div style="color: red; font-size: 0.85em; margin-top: 5px; margin-bottom: 15px;">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">Save Lecture</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

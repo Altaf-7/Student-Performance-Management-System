@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -54,3 +55,8 @@ def lecture_create(request, pk):
         messages.error(request, "Date is required.")
 
     return render(request, 'academics/lecture_form.html', {'offering': offering})
+=======
+from django.shortcuts import render
+
+# Create your views here.
+>>>>>>> origin/main

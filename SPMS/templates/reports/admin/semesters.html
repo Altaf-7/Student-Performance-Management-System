@@ -1,0 +1,43 @@
+{% extends 'admin/base.html' %}
+
+{% block page_title %}Semester Report{% endblock %}
+{% block page_subtitle %}Performance overview across semesters{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'admin_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Semester Number</th>
+                    <th>Course & Batch</th>
+                    <th style="text-align: right;">Active Students</th>
+                    <th style="text-align: right;">Avg SGPA</th>
+                    <th style="text-align: right;">Passes</th>
+                    <th style="text-align: right;">Fails</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in reports %}
+                <tr>
+                    <td>Semester {{ item.semester.semester_number }}</td>
+                    <td>{{ item.semester.course_batch.course.name }} B{{ item.semester.course_batch.academic_year }}</td>
+                    <td style="text-align: right;">{{ item.active_students }}</td>
+                    <td style="text-align: right; font-weight: bold; color: #1976d2;">{{ item.avg_sgpa|default:"--" }}</td>
+                    <td style="text-align: right; color: #2e7d32; font-weight: 500;">{{ item.pass_count }}</td>
+                    <td style="text-align: right; color: #d32f2f; font-weight: 500;">{{ item.fail_count }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--muted); padding: 20px;">No semester data found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

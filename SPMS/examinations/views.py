@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.decorators import login_required
@@ -91,3 +92,8 @@ def exam_results(request, pk):
 
     rows = [{'enrollment': e, 'result': existing.get(e.student_id)} for e in enrollments]
     return render(request, 'examinations/exam_results.html', {'exam': exam, 'rows': rows})
+=======
+from django.shortcuts import render
+
+# Create your views here.
+>>>>>>> origin/main

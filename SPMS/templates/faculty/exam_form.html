@@ -1,0 +1,80 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}{% if object %}Edit Exam{% else %}Schedule Exam{% endif %}{% endblock %}
+{% block page_subtitle %}Set up an examination for your students{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <form method="post" class="form-container" style="max-width: 600px;">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.offering.id_for_label }}">Subject Offering</label>
+            {{ form.offering }}
+            {% if form.offering.errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.offering.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div style="display: flex; gap: 20px;">
+            <div class="form-group" style="flex: 1;">
+                <label class="form-label" for="{{ form.exam_term.id_for_label }}">Exam Term</label>
+                {{ form.exam_term }}
+                {% if form.exam_term.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.exam_term.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group" style="flex: 1;">
+                <label class="form-label" for="{{ form.exam_category.id_for_label }}">Category</label>
+                {{ form.exam_category }}
+                {% if form.exam_category.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.exam_category.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 20px;">
+            <div class="form-group" style="flex: 1;">
+                <label class="form-label" for="{{ form.exam_date.id_for_label }}">Date</label>
+                {{ form.exam_date }}
+                {% if form.exam_date.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.exam_date.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group" style="flex: 1;">
+                <label class="form-label" for="{{ form.total_marks.id_for_label }}">Total Marks</label>
+                {{ form.total_marks }}
+                {% if form.total_marks.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.total_marks.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.status.id_for_label }}">Status</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.status.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.description.id_for_label }}">Description (Optional)</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.description.errors }}</div>
+            {% endif %}
+            {% if form.non_field_errors %}
+                <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.non_field_errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-primary">Save Exam</button>
+            <a href="{% url 'faculty:exams' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

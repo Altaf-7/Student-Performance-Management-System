@@ -1,4 +1,5 @@
 from django.contrib import admin
+<<<<<<< HEAD
 from .models import Exam, ExamResult
 
 
@@ -19,3 +20,7 @@ class ExamResultAdmin(admin.ModelAdmin):
     list_display = ('student', 'exam', 'attempt_number', 'attempt_type', 'marks_obtained', 'grade', 'pass_status', 'is_latest')
     list_filter = ('attempt_type', 'is_latest', 'exam__subject_offering')
     autocomplete_fields = ['student']
+=======
+
+# Register your models here.
+>>>>>>> origin/main

@@ -1,0 +1,47 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}Faculty Details{% endblock %}
+{% block page_subtitle %}{{ faculty.user.get_full_name }} - {{ faculty.designation }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'spms_admin:faculty_list' %}" class="btn btn-secondary">&larr; Back to Faculty</a>
+        <a href="{% url 'spms_admin:user_detail' pk=faculty.user.pk %}" class="btn btn-secondary">Manage Account</a>
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <!-- Profile info -->
+        <div class="form-container" style="flex: 1; min-width: 300px;">
+            <h3 style="margin-bottom: 15px; font-size: 16px;">Personal Information</h3>
+            <p><strong>Name:</strong> {{ faculty.user.get_full_name }}</p>
+            <p><strong>Email:</strong> {{ faculty.user.email }}</p>
+            <p><strong>Contact:</strong> {{ faculty.user.contact_number|default:"--" }}</p>
+            <p><strong>Department:</strong> {{ faculty.department.name|default:"Not Assigned" }}</p>
+            <p><strong>Designation:</strong> {{ faculty.designation }}</p>
+            <p><strong>Specialization:</strong> {{ faculty.specialization|default:"--" }}</p>
+            <p><strong>Qualification:</strong> {{ faculty.qualification|default:"--" }}</p>
+            <p><strong>Office Email:</strong> {{ faculty.office_email|default:"--" }}</p>
+            <p><strong>Office Contact:</strong> {{ faculty.office_contact|default:"--" }}</p>
+            <p><strong>Joined:</strong> {{ faculty.date_of_join|default:"--" }}</p>
+        </div>
+
+        <!-- Academic info -->
+        <div style="flex: 1; min-width: 300px;">
+            <div class="form-container">
+                <h3 style="margin-bottom: 15px; font-size: 16px;">Current Subject Offerings</h3>
+                {% for offering in offerings %}
+                    <div style="padding: 10px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-color); margin-bottom: 10px;">
+                        <p><strong>{{ offering.subject.name }} ({{ offering.subject.code }})</strong></p>
+                        <p>Type: <span style="text-transform: capitalize;">{{ offering.subject_type }}</span></p>
+                        <p>Credits: {{ offering.credits }}</p>
+                        <p>Semester {{ offering.semester.semester_number }} - {{ offering.semester.course_batch.academic_year }}</p>
+                    </div>
+                {% empty %}
+                    <p class="muted">Not assigned to any subjects.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

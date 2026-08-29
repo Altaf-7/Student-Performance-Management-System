@@ -1,0 +1,47 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Class Attendance Report{% endblock %}
+{% block page_subtitle %}Attendance overview for your assigned subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Course & Batch</th>
+                    <th style="text-align: right;">Students</th>
+                    <th style="text-align: right;">Lectures</th>
+                    <th style="text-align: right;">Avg Attendance</th>
+                    <th style="text-align: right;">Students < 75%</th>
+                    <th style="text-align: right;">Students >= 90%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in reports %}
+                <tr>
+                    <td>{{ item.offering.subject.name }} ({{ item.offering.subject.code }})</td>
+                    <td>{{ item.offering.semester.course_batch.course.name }} B{{ item.offering.semester.course_batch.academic_year }} (Sem {{ item.offering.semester.semester_number }})</td>
+                    <td style="text-align: right;">{{ item.total_students }}</td>
+                    <td style="text-align: right;">{{ item.total_lectures }}</td>
+                    <td style="text-align: right; font-weight: 500; color: {% if item.average_attendance >= 75 %}#2e7d32{% else %}#d32f2f{% endif %};">
+                        {{ item.average_attendance }}%
+                    </td>
+                    <td style="text-align: right; color: #d32f2f; font-weight: bold;">{{ item.below_threshold }}</td>
+                    <td style="text-align: right; color: #2e7d32; font-weight: bold;">{{ item.above_threshold }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--muted); padding: 20px;">No subject offerings found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

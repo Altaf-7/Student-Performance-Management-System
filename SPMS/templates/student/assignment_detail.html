@@ -1,0 +1,62 @@
+{% extends 'student/base.html' %}
+{% block title %}{{ assignment.title }} | SPMS{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ assignment.title }}</h1>
+    <p>{{ assignment.offering.subject.name }} ({{ assignment.offering.subject.code }})</p>
+</div>
+<div class="dashboard-grid">
+    <div class="card">
+        <h2>Assignment Details</h2>
+        <p><strong>Status:</strong> <span class="badge {% if assignment.status == 'active' %}badge-success{% else %}badge-error{% endif %}">{{ assignment.get_status_display }}</span></p>
+        <p><strong>Due Date:</strong> {{ assignment.due_datetime }}</p>
+        <p><strong>Maximum Marks:</strong> {{ assignment.maximum_marks }}</p>
+        
+        <h3 style="margin-top: 1rem;">Description</h3>
+        <p>{{ assignment.description|default:"None" }}</p>
+        
+        <h3 style="margin-top: 1rem;">Instructions</h3>
+        <p>{{ assignment.instructions|default:"None" }}</p>
+        
+        {% if assignment.file_attachment %}
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'students:download_assignment_attachment' assignment.id %}" class="btn btn-secondary" target="_blank">Download Attachment</a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <h2>Your Submission</h2>
+        {% if submission %}
+                <p><strong>Status:</strong> <span class="badge {% if submission.status == 'submitted' %}badge-success{% else %}badge-warning{% endif %}">{{ submission.get_status_display }}</span></p>
+                <p><strong>Submitted At:</strong> {{ submission.submitted_at|date:"M d, Y H:i" }}</p>
+                <p><strong>File:</strong> <a href="{% url 'students:download_submission' submission.id %}" class="text-link" target="_blank">View Submission</a></p>
+            </div>{% endif %}
+            <hr style="border:none; border-top:1px solid var(--line); margin: 15px 0;">
+            <h3>Grading</h3>
+            {% if submission.marks_awarded %}
+                <p><strong>Marks Awarded:</strong> {{ submission.marks_awarded }} / {{ assignment.maximum_marks }}</p>
+                <p><strong>Feedback:</strong> {{ submission.feedback|default:"None" }}</p>
+            {% else %}
+                <p>Not graded yet.</p>
+            {% endif %}
+        {% else %}
+            {% if assignment.status == 'active' %}
+                <form method="post" action="{% url 'students:assignment_submit' assignment.id %}" enctype="multipart/form-data" class="auth-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field.errors }}
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">Submit Assignment</button>
+                </form>
+            {% else %}
+                <p class="empty-state">This assignment is closed. You did not submit it.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

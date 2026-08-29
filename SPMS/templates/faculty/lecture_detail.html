@@ -1,0 +1,22 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Lecture Detail{% endblock %}
+{% block page_subtitle %}{{ lecture.offering.subject.name }} on {{ lecture.date }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section" style="max-width: 600px;">
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+        <a href="{% url 'faculty:lectures' offering_id=lecture.offering.id %}" class="btn btn-secondary">&larr; Back to Lectures</a>
+        <a href="{% url 'faculty:attendance_entry' lecture_id=lecture.id %}" class="btn btn-primary">Mark/View Attendance</a>
+    </div>
+
+    <div class="form-container">
+        <h3 style="margin-bottom: 15px; font-size: 16px;">Lecture Information</h3>
+        <p><strong>Subject:</strong> {{ lecture.offering.subject.name }} ({{ lecture.offering.subject.code }})</p>
+        <p><strong>Course/Batch:</strong> {{ lecture.offering.semester.course_batch.course.code }} - {{ lecture.offering.semester.course_batch.academic_year }}</p>
+        <p><strong>Date:</strong> {{ lecture.date }}</p>
+        <p><strong>Start Time:</strong> {{ lecture.start_time }}</p>
+        <p><strong>End Time:</strong> {{ lecture.end_time }}</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.decorators import login_required
@@ -112,3 +113,8 @@ def submission_grade(request, pk):
         return redirect('assignments:submissions', pk=submission.assignment_id)
 
     return render(request, 'assignments/submission_grade.html', {'submission': submission})
+=======
+from django.shortcuts import render
+
+# Create your views here.
+>>>>>>> origin/main

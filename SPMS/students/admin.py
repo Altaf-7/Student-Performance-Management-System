@@ -1,4 +1,5 @@
 from django.contrib import admin
+<<<<<<< HEAD
 from .models import StudentProfile, StudentCourse, StudentSemester, SemesterResult, StudentGraduation
 
 
@@ -32,3 +33,7 @@ class SemesterResultAdmin(admin.ModelAdmin):
 @admin.register(StudentGraduation)
 class StudentGraduationAdmin(admin.ModelAdmin):
     list_display = ('student', 'student_course', 'graduation_date', 'final_cgpa')
+=======
+
+# Register your models here.
+>>>>>>> origin/main

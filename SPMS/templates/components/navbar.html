@@ -1,0 +1,39 @@
+<header class="navbar">
+    <a href="{% url 'landing_page' %}" class="brand" aria-label="SPMS home">
+        <span class="brand-mark"></span>
+        SPMS
+    </a>
+    
+    <button class="menu-toggle" id="mobile-menu-btn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav-links" aria-label="User navigation">
+        {% if request.user.is_authenticated %}
+            <span style="color: var(--muted);">{{ request.user.email }}</span>
+            <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;font-weight:inherit;color:inherit;" class="nav-links a">Logout</button>
+            </form>
+        {% else %}
+            {% if request.resolver_match.url_name != 'login' %}
+                <a href="{% url 'accounts:login' %}">Login</a>
+            {% endif %}
+            {% if request.resolver_match.url_name != 'signup' %}
+                <a href="{% url 'accounts:signup' %}">Register</a>
+            {% endif %}
+        {% endif %}
+    </nav>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        if (menuBtn && sidebar) {
+            menuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+    });
+</script>

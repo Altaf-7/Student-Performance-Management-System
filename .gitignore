@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python
 __pycache__/
 *.py[cod]
@@ -18,3 +19,7 @@ db.sqlite3-journal
 .vscode/
 .idea/
 *.swp
+=======
+.venv
+__pycache__
+>>>>>>> origin/main

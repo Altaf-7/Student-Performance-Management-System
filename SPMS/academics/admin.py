@@ -1,4 +1,5 @@
 from django.contrib import admin
+<<<<<<< HEAD
 from .models import Department, Course, CourseBatch, Semester, Subject, SubjectOffering, Lecture
 
 
@@ -45,3 +46,7 @@ class LectureAdmin(admin.ModelAdmin):
     list_display = ('subject_offering', 'date', 'topic', 'created_by')
     list_filter = ('subject_offering',)
     date_hierarchy = 'date'
+=======
+
+# Register your models here.
+>>>>>>> origin/main

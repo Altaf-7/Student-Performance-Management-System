@@ -1,0 +1,113 @@
+{% extends 'admin/base.html' %}
+
+{% block page_title %}Admin Analytics{% endblock %}
+{% block page_subtitle %}Visual insights of system-wide academic data{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'admin_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+        <!-- Enrollment Distribution Chart -->
+        <div class="form-container">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">Enrollment by Department</h3>
+            {% if analytics.enrollment_chart.data %}
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="enrollmentChart"></canvas>
+            </div>
+            {% else %}
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-style: italic;">
+                No enrollment data available.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- SGPA Overview Stats -->
+        <div class="form-container">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">Overall Academic Performance</h3>
+            
+            <div style="text-align: center; margin-bottom: 30px; margin-top: 20px;">
+                <div style="font-size: 14px; color: var(--muted); text-transform: uppercase;">System-Wide Average SGPA</div>
+                <div style="font-size: 48px; font-weight: bold; color: #1976d2; margin-top: 10px;">
+                    {{ analytics.sgpa_stats.avg_sgpa|default:"0.00" }}
+                </div>
+            </div>
+            
+            {% if analytics.sgpa_stats.pass_count or analytics.sgpa_stats.fail_count %}
+            <div style="position: relative; height: 180px; width: 100%;">
+                <canvas id="passFailChart"></canvas>
+            </div>
+            {% else %}
+            <div style="height: 180px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-style: italic;">
+                No pass/fail data available.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const primaryColor = '#1976d2';
+        const successColor = '#2e7d32';
+        const dangerColor = '#d32f2f';
+        const warningColor = '#f57c00';
+        const colors = [primaryColor, successColor, warningColor, dangerColor, '#9c27b0', '#00bcd4', '#ffeb3b'];
+
+        // Enrollment Chart
+        {% if analytics.enrollment_chart.data %}
+        const enrollCtx = document.getElementById('enrollmentChart').getContext('2d');
+        new Chart(enrollCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ analytics.enrollment_chart.labels|safe }},
+                datasets: [{
+                    data: {{ analytics.enrollment_chart.data|safe }},
+                    backgroundColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+        {% endif %}
+
+        // Pass/Fail Chart
+        {% if analytics.sgpa_stats.pass_count or analytics.sgpa_stats.fail_count %}
+        const passFailCtx = document.getElementById('passFailChart').getContext('2d');
+        new Chart(passFailCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pass', 'Fail'],
+                datasets: [{
+                    data: [{{ analytics.sgpa_stats.pass_count }}, {{ analytics.sgpa_stats.fail_count }}],
+                    backgroundColor: [successColor, dangerColor],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

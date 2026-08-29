@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -38,3 +39,8 @@ def mark_attendance(request, pk):
         for e in enrollments
     ]
     return render(request, 'attendance/mark_attendance.html', {'lecture': lecture, 'rows': rows})
+=======
+from django.shortcuts import render
+
+# Create your views here.
+>>>>>>> origin/main

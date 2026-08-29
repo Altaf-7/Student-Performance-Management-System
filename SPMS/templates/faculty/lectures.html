@@ -1,0 +1,50 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Lectures - {{ offering.subject.name }}{% endblock %}
+{% block page_subtitle %}Course: {{ offering.semester.course_batch.course.code }} | Batch: {{ offering.semester.course_batch.academic_year }} | Semester: {{ offering.semester.semester_number }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'faculty:subject_detail' pk=offering.id %}" class="btn btn-secondary">&larr; Back to Offering</a>
+        <div>
+            <a href="{% url 'faculty:attendance_summary' offering_id=offering.id %}" class="btn btn-secondary">Attendance Summary</a>
+            <a href="{% url 'faculty:lecture_create' offering_id=offering.id %}" class="btn btn-primary">Add Lecture</a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lecture in lectures %}
+                <tr>
+                    <td>{{ lecture.date }}</td>
+                    <td>{{ lecture.start_time }}</td>
+                    <td>{{ lecture.end_time }}</td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="{% url 'faculty:attendance_entry' lecture_id=lecture.id %}" class="btn btn-primary" style="padding: 4px 8px; font-size: 11px;">Mark Attendance</a>
+                            <a href="{% url 'faculty:lecture_detail' pk=lecture.id %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">View</a>
+                            <a href="{% url 'faculty:lecture_update' pk=lecture.id %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Edit</a>
+                            <a href="{% url 'faculty:lecture_delete' pk=lecture.id %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px; color: #d32f2f; border-color: #d32f2f;">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center" style="color: var(--muted); padding: 20px;">No lectures have been created for this offering.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Examinations{% endblock %}
+{% block page_subtitle %}Manage exams for your assigned subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty:exam_create' %}" class="btn btn-primary">Schedule Exam</a>
+    </div>
+    
+    <div class="data-list">
+        {% for exam in exams %}
+        <div class="data-item">
+            <div>
+                <div class="data-main">{{ exam.get_exam_term_display }} - {{ exam.get_exam_category_display }}</div>
+                <div class="data-sub">{{ exam.offering.subject.name }} ({{ exam.offering.subject.code }})</div>
+                <div class="data-sub" style="margin-top: 5px;">
+                    Date: {{ exam.exam_date }} • Total Marks: {{ exam.total_marks }} • Status: {{ exam.get_status_display }}
+                </div>
+            </div>
+            <div class="data-meta">
+                <a href="{% url 'faculty:exam_detail' pk=exam.pk %}" class="btn btn-secondary">Detail</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="data-item">
+            <div class="data-main" style="color: var(--muted);">No exams have been scheduled.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
