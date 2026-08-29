@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Enter Results{% endblock %}
+{% block content %}
+<h4 class="mb-1">Enter Results</h4>
+<p class="text-muted">{{ exam }} &middot; {{ exam.subject_offering }} &middot; Max Marks: {{ exam.max_marks }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="card p-3">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Roll No</th><th>Name</th><th>Attendance</th><th style="width:140px">Marks</th><th>Retest?</th></tr></thead>
+      <tbody>
+      {% for row in rows %}
+        <tr>
+          <td>{{ row.enrollment.student.roll_number }}</td>
+          <td>{{ row.enrollment.student.user.get_full_name|default:row.enrollment.student.user.username }}</td>
+          <td>
+            <select name="attendance_{{ row.enrollment.student_id }}" class="form-select form-select-sm">
+              <option value="PRESENT" {% if not row.result or row.result.attendance_status == 'PRESENT' %}selected{% endif %}>Present</option>
+              <option value="ABSENT" {% if row.result.attendance_status == 'ABSENT' %}selected{% endif %}>Absent</option>
+              <option value="MEDICAL_LEAVE" {% if row.result.attendance_status == 'MEDICAL_LEAVE' %}selected{% endif %}>Medical Leave</option>
+            </select>
+          </td>
+          <td><input type="number" step="0.01" min="0" max="{{ exam.max_marks }}" name="marks_{{ row.enrollment.student_id }}" class="form-control form-control-sm" value="{{ row.result.marks_obtained|default_if_none:'' }}"></td>
+          <td class="text-center">
+            {% if row.result and not row.result.pass_status %}
+            <input type="checkbox" class="form-check-input" name="retest_{{ row.enrollment.student_id }}">
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted">No students enrolled in this semester yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-3">
+    <button type="submit" class="btn btn-primary">Save Results</button>
+    <a href="{% url 'academics:offering_detail' exam.subject_offering_id %}" class="btn btn-link">Back</a>
+  </div>
+</form>
+{% endblock %}

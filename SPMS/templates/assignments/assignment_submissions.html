@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Submissions{% endblock %}
+{% block content %}
+<h4>Submissions &mdash; {{ assignment.title }}</h4>
+<p class="text-muted">{{ assignment.subject_offering }} &middot; Max Marks: {{ assignment.max_marks }}</p>
+<div class="card p-3">
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Student</th><th>Submitted</th><th>File</th><th>Marks</th><th></th></tr></thead>
+    <tbody>
+    {% for s in submissions %}
+      <tr>
+        <td>{{ s.student }}</td>
+        <td>{{ s.submitted_at|date:"d M Y H:i" }}{% if s.is_late %} <span class="badge text-bg-warning">Late</span>{% endif %}</td>
+        <td>{% if s.file %}<a href="{{ s.file.url }}" target="_blank">Download</a>{% else %}&mdash;{% endif %}</td>
+        <td>{% if s.marks is not None %}{{ s.marks }}/{{ assignment.max_marks }}{% else %}<span class="text-muted">Not graded</span>{% endif %}</td>
+        <td><a href="{% url 'assignments:grade' s.pk %}" class="btn btn-sm btn-outline-primary">{% if s.marks is not None %}Update{% else %}Grade{% endif %}</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-muted">No submissions yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<a href="{% url 'academics:offering_detail' assignment.subject_offering_id %}" class="btn btn-link mt-2">Back</a>
+{% endblock %}

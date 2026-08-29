@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="mb-0">Welcome, {{ user.get_full_name|default:user.username }}</h3>
+    <div class="text-muted">Roll No: {{ profile.roll_number }}
+      {% if current_course %} &middot; {{ current_course.course_batch.course.name }} ({{ current_course.course_batch.name }}){% endif %}
+    </div>
+  </div>
+  {% if current_semester_enrollment %}
+  <span class="badge text-bg-primary fs-6">Semester {{ current_semester_enrollment.semester.number }}</span>
+  {% endif %}
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-6">
+    <div class="card stat-card p-3 text-center">
+      <div class="text-muted small">Subjects this semester</div>
+      <div class="fs-3 fw-bold text-primary">{{ attendance_summary|length }}</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card stat-card p-3 text-center">
+      <div class="text-muted small">Assignments</div>
+      <div class="fs-3 fw-bold text-primary">{{ assignment_rows|length }}</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card stat-card p-3 text-center">
+      <div class="text-muted small">Exam Records</div>
+      <div class="fs-3 fw-bold text-primary">{{ exam_results|length }}</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card stat-card p-3 text-center">
+      <div class="text-muted small">Semesters on Record</div>
+      <div class="fs-3 fw-bold text-primary">{{ semester_results|length }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card p-3 mb-4">
+  <h5><i class="bi bi-calendar-check text-primary"></i> Attendance</h5>
+  {% if attendance_summary %}
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Subject</th><th>Lectures Held</th><th>Present</th><th style="width:30%">Attendance %</th></tr></thead>
+    <tbody>
+    {% for row in attendance_summary %}
+      <tr>
+        <td><a href="{% url 'academics:offering_detail' row.subject_offering.pk %}">{{ row.subject_offering.subject }}</a></td>
+        <td>{{ row.total }}</td>
+        <td>{{ row.present }}</td>
+        <td>
+          {% if row.pct is not None %}
+            <div class="progress">
+              <div class="progress-bar {% if row.pct < 75 %}bg-danger{% else %}bg-success{% endif %}" style="width: {{ row.pct }}%"></div>
+            </div>
+            <small class="text-muted">{{ row.pct }}%</small>
+          {% else %}
+            <span class="text-muted small">No lectures yet</span>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="text-muted mb-0">No active semester enrollment found.</p>
+  {% endif %}
+</div>
+
+<div class="card p-3 mb-4">
+  <h5><i class="bi bi-journal-text text-primary"></i> Assignments</h5>
+  {% if assignment_rows %}
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Title</th><th>Subject</th><th>Due</th><th>Status</th><th>Marks</th><th></th></tr></thead>
+    <tbody>
+    {% for row in assignment_rows %}
+      <tr>
+        <td>{{ row.assignment.title }}</td>
+        <td>{{ row.assignment.subject_offering.subject }}</td>
+        <td>{{ row.assignment.due_date }}</td>
+        <td>
+          {% if row.submission %}
+            {% if row.submission.is_graded %}<span class="badge text-bg-success">Graded</span>
+            {% else %}<span class="badge text-bg-info">Submitted</span>{% endif %}
+            {% if row.submission.is_late %}<span class="badge text-bg-warning">Late</span>{% endif %}
+          {% else %}
+            <span class="badge text-bg-secondary">Not Submitted</span>
+          {% endif %}
+        </td>
+        <td>{% if row.submission.marks is not None %}{{ row.submission.marks }}/{{ row.assignment.max_marks }}{% else %}&mdash;{% endif %}</td>
+        <td><a href="{% url 'assignments:submit' row.assignment.pk %}" class="btn btn-sm btn-outline-primary">
+          {% if row.submission %}View{% else %}Submit{% endif %}
+        </a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="text-muted mb-0">No assignments yet.</p>
+  {% endif %}
+</div>
+
+<div class="card p-3 mb-4">
+  <h5><i class="bi bi-clipboard-data text-primary"></i> Examination Results</h5>
+  {% if exam_results %}
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Marks</th><th>Grade</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for r in exam_results %}
+      <tr>
+        <td>{{ r.exam }}</td>
+        <td>{{ r.exam.subject_offering.subject }}</td>
+        <td>{{ r.exam.exam_date }}</td>
+        <td>{% if r.marks_obtained is not None %}{{ r.marks_obtained }}/{{ r.exam.max_marks }}{% else %}{{ r.get_attendance_status_display }}{% endif %}</td>
+        <td>{{ r.grade|default:"-" }}</td>
+        <td>{% if r.pass_status %}<span class="badge text-bg-success">Pass</span>{% elif r.pass_status is False %}<span class="badge text-bg-danger">Fail</span>{% else %}&mdash;{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="text-muted mb-0">No results published yet.</p>
+  {% endif %}
+</div>
+
+<div class="card p-3">
+  <h5><i class="bi bi-bar-chart-line text-primary"></i> Semester Performance</h5>
+  {% if semester_results %}
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Semester</th><th>Total Marks</th><th>Obtained</th><th>SGPA</th><th>Status</th><th>Declared</th></tr></thead>
+    <tbody>
+    {% for sr in semester_results %}
+      <tr>
+        <td>Semester {{ sr.student_semester.semester.number }}</td>
+        <td>{{ sr.total_marks }}</td>
+        <td>{{ sr.obtained_marks }}</td>
+        <td>{{ sr.sgpa|default:"-" }}</td>
+        <td>
+          {% if sr.status == 'PASS' %}<span class="badge text-bg-success">Pass</span>
+          {% elif sr.status == 'FAIL' %}<span class="badge text-bg-danger">Fail</span>
+          {% else %}<span class="badge text-bg-secondary">Pending</span>{% endif %}
+        </td>
+        <td>{{ sr.declared_date|default:"-" }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="text-muted mb-0">No semester results declared yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

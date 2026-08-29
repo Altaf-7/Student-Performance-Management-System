@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Schedule Exam{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <h4 class="mb-3">Schedule Exam &mdash; {{ offering.subject }}</h4>
+      <form method="post">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Term</label>
+            <select name="term" class="form-select" required>
+              {% for value, label in terms %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Category</label>
+            <select name="category" class="form-select" required>
+              {% for value, label in categories %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="mb-3"><label class="form-label">Label (optional)</label><input type="text" name="name" class="form-control" placeholder="e.g. Internal Test 2"></div>
+        <div class="row">
+          <div class="col-md-6 mb-3"><label class="form-label">Exam Date</label><input type="date" name="exam_date" class="form-control" required></div>
+          <div class="col-md-6 mb-3"><label class="form-label">Maximum Marks</label><input type="number" min="1" name="max_marks" class="form-control" required></div>
+        </div>
+        <button class="btn btn-primary" type="submit">Schedule Exam</button>
+        <a href="{% url 'academics:offering_detail' offering.pk %}" class="btn btn-link">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
