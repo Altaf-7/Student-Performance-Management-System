@@ -1,4 +1,8 @@
 from django.test import TestCase
+<<<<<<< HEAD
+
+# Create your tests here.
+=======
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 import datetime
@@ -53,3 +57,4 @@ class AssignmentModelTests(TestCase):
         )
         with self.assertRaises(ValidationError):
             submission.clean()
+>>>>>>> origin/main

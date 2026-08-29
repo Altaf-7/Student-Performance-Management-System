@@ -1,4 +1,8 @@
 from django.test import TestCase
+<<<<<<< HEAD
+
+# Create your tests here.
+=======
 from django.core.exceptions import ValidationError
 from academics.models import Department, Course, CourseBatch, Semester, Subject, SubjectOffering
 from faculty.models import Faculty
@@ -26,3 +30,4 @@ class AcademicsModelTests(TestCase):
         duplicate_offering = SubjectOffering(subject=self.subject, semester=self.semester, faculty=self.faculty, credits=4)
         with self.assertRaises(Exception):
             duplicate_offering.save()
+>>>>>>> origin/main

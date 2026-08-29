@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from django.test import TestCase
+
+# Create your tests here.
+=======
 from django.test import TestCase, Client
 from django.urls import reverse
 from accounts.models import User
@@ -92,3 +97,4 @@ class AuthenticationTests(TestCase):
         self.client.login(username='student@test.com', password='testpassword123')
         response = self.client.post(reverse('accounts:logout'))
         self.assertRedirects(response, reverse('landing_page'))
+>>>>>>> origin/main

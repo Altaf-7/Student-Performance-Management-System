@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from django.test import TestCase
+
+# Create your tests here.
+=======
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils import timezone
@@ -211,3 +216,4 @@ class FacultyModuleTests(TestCase):
         res = ExamResult.objects.get(exam=self.exam1, student=self.student)
         self.assertEqual(res.marks_obtained, Decimal('45.50'))
         self.assertEqual(res.attendance_status, 'present')
+>>>>>>> origin/main

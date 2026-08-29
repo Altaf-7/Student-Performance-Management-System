@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from django.test import TestCase
+
+# Create your tests here.
+=======
 from django.test import TestCase, Client
 from django.urls import reverse
 import datetime
@@ -102,3 +107,4 @@ class StudentModuleTests(TestCase):
         self.client.login(username='student2@example.com', password='password123')
         response = self.client.get(reverse('students:exam_detail', args=[self.exam.id]))
         self.assertEqual(response.status_code, 403)
+>>>>>>> origin/main

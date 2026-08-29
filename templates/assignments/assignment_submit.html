@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ assignment.title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card p-4">
+      <h4>{{ assignment.title }}</h4>
+      <p class="text-muted mb-1">{{ assignment.subject_offering }} &middot; Due {{ assignment.due_date|date:"d M Y H:i" }} &middot; Max Marks: {{ assignment.max_marks }}</p>
+      {% if assignment.description %}<p>{{ assignment.description }}</p>{% endif %}
+      {% if assignment.instructions %}<div class="alert alert-secondary"><strong>Instructions:</strong> {{ assignment.instructions }}</div>{% endif %}
+      {% if assignment.attachment %}<p><a href="{{ assignment.attachment.url }}" target="_blank"><i class="bi bi-paperclip"></i> Assignment attachment</a></p>{% endif %}
+
+      {% if submission %}
+        <div class="alert {% if submission.is_graded %}alert-success{% else %}alert-info{% endif %}">
+          Submitted on {{ submission.submitted_at|date:"d M Y H:i" }}{% if submission.is_late %} <span class="badge text-bg-warning">Late</span>{% endif %}<br>
+          {% if submission.file %}<a href="{{ submission.file.url }}" target="_blank">View your submitted file</a><br>{% endif %}
+          {% if submission.is_graded %}
+            <strong>Marks:</strong> {{ submission.marks }}/{{ assignment.max_marks }}<br>
+            {% if submission.feedback %}<strong>Feedback:</strong> {{ submission.feedback }}{% endif %}
+          {% else %}
+            Awaiting grading.
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if not submission or not submission.is_graded %}
+      <form method="post" enctype="multipart/form-data" class="mt-2">
+        {% csrf_token %}
+        <div class="mb-3"><label class="form-label">File</label><input type="file" name="file" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">Remarks (optional)</label><textarea name="remarks" class="form-control" rows="2"></textarea></div>
+        <button class="btn btn-primary" type="submit">{% if submission %}Resubmit{% else %}Submit{% endif %}</button>
+      </form>
+      {% endif %}
+      <a href="{% url 'dashboard:student' %}" class="btn btn-link mt-2">Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

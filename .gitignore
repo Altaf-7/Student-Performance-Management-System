@@ -1,2 +1,25 @@
+<<<<<<< HEAD
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+.env
+
+# Editors
+.vscode/
+.idea/
+*.swp
+=======
 .venv
 __pycache__
+>>>>>>> origin/main

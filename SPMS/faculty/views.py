@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from django.shortcuts import render
+
+# Create your views here.
+=======
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.http import FileResponse, Http404
@@ -652,3 +657,4 @@ class ExamPublishView(FacultyRequiredMixin, View):
             messages.error(request, 'Exam results are not pending or have already been published.')
         return redirect('faculty:exam_detail', pk=exam.id)
 
+>>>>>>> origin/main

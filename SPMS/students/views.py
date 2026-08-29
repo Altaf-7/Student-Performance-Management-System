@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from django.shortcuts import render
+
+# Create your views here.
+=======
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, Http404
@@ -355,3 +360,4 @@ class PerformanceView(TemplateView):
             context['overall_sgpa'] = total_sgpa / context['reports'].count()
             
         return context
+>>>>>>> origin/main

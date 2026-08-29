@@ -1,4 +1,8 @@
 from django.test import TestCase
+<<<<<<< HEAD
+
+# Create your tests here.
+=======
 from django.core.exceptions import ValidationError
 import datetime
 
@@ -50,3 +54,4 @@ class ExaminationsModelTests(TestCase):
         )
         with self.assertRaises(ValidationError):
             result.clean()
+>>>>>>> origin/main

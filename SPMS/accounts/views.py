@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from django.shortcuts import render
+
+# Create your views here.
+=======
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
@@ -59,3 +64,4 @@ class FacultySignUpView(CreateView):
         user = form.save()
         messages.success(self.request, f'Faculty account for {user.get_full_name()} created successfully.')
         return redirect('spms_admin:dashboard')
+>>>>>>> origin/main

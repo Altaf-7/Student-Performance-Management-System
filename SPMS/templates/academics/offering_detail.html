@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}{{ offering.subject }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h3 class="mb-0">{{ offering.subject.name }} <span class="text-muted">({{ offering.subject.code }})</span></h3>
+    <div class="text-muted">{{ offering.semester.course_batch }} &middot; Semester {{ offering.semester.number }} &middot; Faculty: {{ offering.faculty|default:"Unassigned" }}</div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0"><i class="bi bi-calendar3 text-primary"></i> Lectures</h5>
+        {% if is_owner %}<a href="{% url 'academics:lecture_create' offering.pk %}" class="btn btn-sm btn-primary">+ Add</a>{% endif %}
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for l in lectures %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ l.date }} {% if l.topic %}&mdash; {{ l.topic }}{% endif %}</span>
+            {% if is_owner %}<a href="{% url 'attendance:mark' l.pk %}" class="btn btn-sm btn-outline-secondary">Attendance</a>{% endif %}
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No lectures recorded yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0"><i class="bi bi-journal-text text-primary"></i> Assignments</h5>
+        {% if is_owner %}<a href="{% url 'assignments:create' offering.pk %}" class="btn btn-sm btn-primary">+ Add</a>{% endif %}
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for a in assignments %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ a.title }}<br><small class="text-muted">Due {{ a.due_date|date:"d M Y H:i" }}</small></span>
+            {% if is_owner %}<a href="{% url 'assignments:submissions' a.pk %}" class="btn btn-sm btn-outline-secondary">Submissions</a>
+            {% else %}<a href="{% url 'assignments:submit' a.pk %}" class="btn btn-sm btn-outline-secondary">Open</a>{% endif %}
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No assignments yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0"><i class="bi bi-clipboard-data text-primary"></i> Exams</h5>
+        {% if is_owner %}<a href="{% url 'examinations:create' offering.pk %}" class="btn btn-sm btn-primary">+ Add</a>{% endif %}
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for e in exams %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ e }}<br><small class="text-muted">{{ e.exam_date }}</small></span>
+            {% if is_owner %}<a href="{% url 'examinations:results' e.pk %}" class="btn btn-sm btn-outline-secondary">Results</a>{% endif %}
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No exams scheduled yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

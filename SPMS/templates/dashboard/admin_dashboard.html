@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Admin Overview{% endblock %}
+{% block content %}
+<h3 class="mb-4">Administration Overview</h3>
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-6">
+    <div class="card stat-card p-3 text-center"><div class="text-muted small">Departments</div><div class="fs-2 fw-bold text-primary">{{ stats.departments }}</div></div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card stat-card p-3 text-center"><div class="text-muted small">Courses</div><div class="fs-2 fw-bold text-primary">{{ stats.courses }}</div></div>
+  </div>
+  <div class="col-md-2 col-6">
+    <div class="card stat-card p-3 text-center"><div class="text-muted small">Active Offerings</div><div class="fs-2 fw-bold text-primary">{{ stats.subject_offerings }}</div></div>
+  </div>
+  <div class="col-md-2 col-6">
+    <div class="card stat-card p-3 text-center"><div class="text-muted small">Students</div><div class="fs-2 fw-bold text-primary">{{ stats.students }}</div></div>
+  </div>
+  <div class="col-md-2 col-6">
+    <div class="card stat-card p-3 text-center"><div class="text-muted small">Faculty</div><div class="fs-2 fw-bold text-primary">{{ stats.faculty }}</div></div>
+  </div>
+</div>
+<div class="card p-4">
+  <h5>Manage Academic Records</h5>
+  <p class="text-muted">Departments, courses, batches, semesters, subjects, subject offerings, users, and student/faculty profiles are all managed from the Django admin site.</p>
+  <a href="/admin/" class="btn btn-primary"><i class="bi bi-gear"></i> Open Admin Site</a>
+</div>
+{% endblock %}
