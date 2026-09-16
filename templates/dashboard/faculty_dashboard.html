@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Faculty Dashboard{% endblock %}
+{% block content %}
+<h4 class="mb-4">Faculty Dashboard</h4>
+<div class="row g-3 mb-4">
+  {% include "dashboard/_stat_card.html" with label="My Courses" value=courses.count icon="bi-journal-bookmark" color="#4f46e5" %}
+  {% include "dashboard/_stat_card.html" with label="Total Students" value=student_count icon="bi-people" color="#059669" %}
+  {% include "dashboard/_stat_card.html" with label="Attendance Pending" value=attendance_pending icon="bi-calendar-x" color="#d97706" %}
+  {% include "dashboard/_stat_card.html" with label="Pending Grading" value=pending_grading icon="bi-pencil" color="#dc2626" %}
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card p-3 mb-3">
+      <h6>My Courses</h6>
+      <table class="table table-sm">
+        <thead><tr><th>Code</th><th>Name</th><th>Semester</th></tr></thead>
+        <tbody>
+          {% for c in courses %}
+          <tr><td><a href="{% url 'academics:course_detail' c.pk %}">{{ c.course_code }}</a></td><td>{{ c.course_name }}</td><td>{{ c.semester }}</td></tr>
+          {% empty %}<tr><td colspan="3" class="text-muted">No courses assigned yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card p-3">
+      <h6>Upcoming Examinations</h6>
+      {% for e in upcoming_exams %}
+        <div class="d-flex justify-content-between border-bottom py-2 small"><span>{{ e.name }} ({{ e.course.course_code }})</span><span class="text-muted">{{ e.exam_date }}</span></div>
+      {% empty %}<p class="text-muted small">None scheduled.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card p-3 mb-3">
+      <h6>Recent Submissions</h6>
+      {% for s in recent_submissions %}
+        <div class="d-flex justify-content-between border-bottom py-2 small">
+          <span>{{ s.student.get_full_name }} - {{ s.assignment.title }}</span>
+          <span class="badge {% if s.status == 'GRADED' %}bg-success{% else %}bg-secondary{% endif %}">{{ s.get_status_display }}</span>
+        </div>
+      {% empty %}<p class="text-muted small">No submissions yet.</p>{% endfor %}
+    </div>
+    <div class="card p-3">
+      <h6>At-Risk Students (My Courses)</h6>
+      {% for r in at_risk_students %}
+        <div class="d-flex justify-content-between border-bottom py-2 small">
+          <span>{{ r.student.get_full_name }}</span>
+          <span class="badge badge-risk-{{ r.risk_level }}">{{ r.risk_level }}</span>
+        </div>
+      {% empty %}<p class="text-muted small">No at-risk students detected.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

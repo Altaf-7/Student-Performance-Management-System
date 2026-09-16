@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<h4 class="mb-4">Institution-wide Analytics</h4>
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card p-3"><h6>Average Marks by Subject</h6><canvas id="c1" height="200"></canvas></div></div>
+  <div class="col-lg-6"><div class="card p-3"><h6>Grade Distribution</h6><canvas id="c2" height="200"></canvas></div></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card p-3"><h6>Department-wise Performance</h6><canvas id="c3" height="200"></canvas></div></div>
+  <div class="col-lg-6"><div class="card p-3"><h6>Monthly Attendance</h6><canvas id="c4" height="200"></canvas></div></div>
+</div>
+{{ chart_marks_by_course|json_script:"d1" }}
+{{ chart_grade_distribution|json_script:"d2" }}
+{{ chart_department_performance|json_script:"d3" }}
+{{ chart_monthly_attendance|json_script:"d4" }}
+{% endblock %}
+{% block extra_js %}
+<script>
+function rd(id){return JSON.parse(document.getElementById(id).textContent);}
+new Chart(document.getElementById('c1'), {type:'bar', data:{labels:rd('d1').labels, datasets:[{label:'Avg Marks', data:rd('d1').data, backgroundColor:'#4f46e5'}]}, options:{plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('c2'), {type:'doughnut', data:{labels:rd('d2').labels, datasets:[{data:rd('d2').data, backgroundColor:["#4f46e5","#059669","#d97706","#dc2626","#0891b2","#7c3aed"]}]}});
+new Chart(document.getElementById('c3'), {type:'bar', data:{labels:rd('d3').labels, datasets:[{label:'Avg Marks', data:rd('d3').data, backgroundColor:'#0891b2'}]}, options:{indexAxis:'y', plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('c4'), {type:'line', data:{labels:rd('d4').labels, datasets:[{label:'Attendance %', data:rd('d4').data, borderColor:'#4f46e5', tension:.3}]}});
+</script>
+{% endblock %}

@@ -1,0 +1,37 @@
+<div class="spms-topbar d-flex justify-content-between align-items-center">
+  <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+  <nav aria-label="breadcrumb" class="d-none d-md-block">
+    {% block breadcrumbs %}{% endblock %}
+  </nav>
+  <div class="d-flex align-items-center gap-3">
+    <div class="dropdown">
+      <button class="btn btn-light position-relative" data-bs-toggle="dropdown">
+        <i class="bi bi-bell"></i>
+        {% if unread_notification_count %}
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ unread_notification_count }}</span>
+        {% endif %}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 300px;">
+        <li class="px-2 pb-1 fw-semibold">Notifications</li>
+        {% for n in recent_notifications %}
+          <li><a class="dropdown-item small {% if not n.is_read %}fw-semibold{% endif %}" href="{% url 'notifications:notification_list' %}">{{ n.title }}</a></li>
+        {% empty %}
+          <li class="px-2 text-muted small">No notifications yet.</li>
+        {% endfor %}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item small text-center" href="{% url 'notifications:notification_list' %}">View all</a></li>
+      </ul>
+    </div>
+    <div class="dropdown">
+      <button class="btn btn-light d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+        <i class="bi bi-person-circle"></i> {{ user.get_full_name|default:user.username }}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
+        <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change Password</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

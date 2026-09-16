@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}My Attendance{% endblock %}
+{% block content %}
+<h4 class="mb-3">My Attendance</h4>
+<div class="card p-3 mb-3 d-flex flex-row align-items-center gap-3">
+  <span class="badge badge-band-{{ data.overall_band }} fs-6">{{ data.overall_percentage }}%</span>
+  <span class="text-muted">Overall attendance ({{ data.overall_band }})</span>
+</div>
+<div class="card p-3">
+  <table class="table">
+    <thead><tr><th>Course</th><th>Present</th><th>Late</th><th>Absent</th><th>Percentage</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for c in data.per_course %}
+      <tr><td>{{ c.course.course_code }}</td><td>{{ c.present }}</td><td>{{ c.late }}</td><td>{{ c.absent }}</td><td>{{ c.percentage }}%</td>
+      <td><span class="badge badge-band-{{ c.band }}">{{ c.band }}</span></td></tr>
+    {% empty %}<tr><td colspan="6"><div class="empty-state">No attendance recorded yet.</div></td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

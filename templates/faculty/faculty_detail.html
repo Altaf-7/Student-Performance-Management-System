@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.user.get_full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-3 mb-4">
+  {% if profile.user.profile_photo %}<img src="{{ profile.user.profile_photo.url }}" class="rounded-circle" width="70" height="70" style="object-fit:cover;" alt="{{ profile.user.get_full_name }}">{% else %}<i class="bi bi-person-circle" style="font-size:4rem;color:#d1d5db;"></i>{% endif %}
+  <div>
+    <h4 class="mb-0">{{ profile.user.get_full_name }}</h4>
+    <span class="text-muted">{{ profile.faculty_id }} | {{ profile.get_designation_display }} | {{ profile.department|default:"-" }}</span>
+  </div>
+</div>
+<div class="card p-3">
+  <h6>Teaching Workload ({{ courses.count }} courses)</h6>
+  <table class="table table-sm">
+    <thead><tr><th>Code</th><th>Name</th><th>Semester</th></tr></thead>
+    <tbody>
+    {% for c in courses %}<tr><td>{{ c.course_code }}</td><td>{{ c.course_name }}</td><td>{{ c.semester }}</td></tr>
+    {% empty %}<tr><td colspan="3" class="text-muted">No courses assigned.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

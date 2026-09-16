@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Performance Analytics{% endblock %}
+{% block content %}
+<h4 class="mb-4">My Performance Analytics</h4>
+<div class="row g-3 mb-4">
+  {% include "dashboard/_stat_card.html" with label="CGPA" value=cgpa icon="bi-award" color="#4f46e5" %}
+  {% include "dashboard/_stat_card.html" with label="Attendance" value=attendance.overall_percentage suffix="%" icon="bi-calendar-check" color="#059669" %}
+  {% include "dashboard/_stat_card.html" with label="Risk Level" value=risk.risk_level icon="bi-shield-exclamation" color="#dc2626" %}
+</div>
+<div class="row g-3">
+  <div class="col-lg-6"><div class="card p-3"><h6>GPA Trend</h6><canvas id="c1" height="200"></canvas></div></div>
+  <div class="col-lg-6"><div class="card p-3"><h6>Grade Distribution</h6><canvas id="c2" height="200"></canvas></div></div>
+</div>
+{{ chart_gpa_trend|json_script:"d1" }}
+{{ chart_grade_distribution|json_script:"d2" }}
+{% endblock %}
+{% block extra_js %}
+<script>
+function rd(id){return JSON.parse(document.getElementById(id).textContent);}
+new Chart(document.getElementById('c1'), {type:'line', data:{labels:rd('d1').labels, datasets:[{label:'GPA', data:rd('d1').data, borderColor:'#4f46e5', tension:.3}]}, options:{scales:{y:{min:0,max:10}}}});
+new Chart(document.getElementById('c2'), {type:'doughnut', data:{labels:rd('d2').labels, datasets:[{data:rd('d2').data, backgroundColor:["#4f46e5","#059669","#d97706","#dc2626","#0891b2","#7c3aed"]}]}});
+</script>
+{% endblock %}

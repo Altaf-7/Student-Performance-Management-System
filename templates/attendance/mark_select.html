@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Mark Attendance{% endblock %}
+{% block content %}
+<h4 class="mb-3">Mark Attendance</h4>
+<div class="card p-4" style="max-width:480px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3"><label class="form-label">Course</label>{{ form.course }}</div>
+    <div class="mb-3"><label class="form-label">Date</label>{{ form.date }}</div>
+    <button type="submit" class="btn btn-primary">Continue</button>
+  </form>
+</div>
+{% endblock %}

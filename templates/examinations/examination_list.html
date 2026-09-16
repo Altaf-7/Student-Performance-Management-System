@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Examinations{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Examinations</h4>
+  <a href="{% url 'examinations:examination_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create Examination</a>
+</div>
+<div class="card p-3">
+  <table class="table table-hover">
+    <thead><tr><th>Name</th><th>Type</th><th>Course</th><th>Date</th><th>Max Marks</th><th>Published</th><th></th></tr></thead>
+    <tbody>
+      {% for e in examinations %}
+      <tr>
+        <td>{{ e.name }}</td><td>{{ e.get_exam_type_display }}</td><td>{{ e.course.course_code }}</td><td>{{ e.exam_date }}</td><td>{{ e.maximum_marks }}</td>
+        <td>{% if e.is_published %}<span class="badge bg-success">Published</span>{% else %}<span class="badge bg-secondary">Draft</span>{% endif %}</td>
+        <td class="text-end">
+          <a href="{% url 'examinations:enter_results' e.pk %}" class="btn btn-sm btn-outline-secondary">Results</a>
+          <a href="{% url 'examinations:examination_edit' e.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+          <form method="post" action="{% url 'examinations:examination_delete' e.pk %}" class="d-inline" data-confirm="Delete this examination?">{% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></form>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="7"><div class="empty-state">No examinations yet.</div></td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% include "includes/pagination.html" %}
+</div>
+{% endblock %}

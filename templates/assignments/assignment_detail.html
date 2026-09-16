@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ assignment.title }}{% endblock %}
+{% block content %}
+<h4>{{ assignment.title }}</h4>
+<p class="text-muted">{{ assignment.course.course_code }} | Due {{ assignment.due_date|date:"M d, Y H:i" }} | Max marks: {{ assignment.maximum_marks }}</p>
+<div class="card p-3 mb-3"><p class="mb-0">{{ assignment.description|default:"No description." }}</p></div>
+<div class="card p-3">
+  <h6>Submissions</h6>
+  <table class="table table-sm">
+    <thead><tr><th>Student</th><th>Status</th><th>Marks</th><th>Submitted</th><th></th></tr></thead>
+    <tbody>
+    {% for s in submissions %}
+      <tr>
+        <td>{{ s.student.get_full_name }}</td>
+        <td><span class="badge bg-{% if s.status == 'GRADED' %}success{% elif s.status == 'LATE' %}warning{% else %}secondary{% endif %}">{{ s.get_status_display }}</span></td>
+        <td>{{ s.marks_obtained|default:"-" }}</td>
+        <td>{{ s.submitted_at|date:"M d, H:i" }}</td>
+        <td><a href="{% url 'assignments:grade_submission' s.pk %}" class="btn btn-sm btn-outline-primary">Grade</a> <a href="{{ s.file.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">File</a></td>
+      </tr>
+    {% empty %}<tr><td colspan="5" class="text-muted">No submissions yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Semesters{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Semesters</h4>
+  <a href="{% url 'academics:semester_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Semester</a>
+</div>
+<div class="card p-3">
+  <table class="table table-hover">
+    <thead><tr><th>Name</th><th>Number</th><th>Academic Year</th><th>Start</th><th>End</th><th>Active</th><th></th></tr></thead>
+    <tbody>
+      {% for s in semesters %}
+      <tr>
+        <td>{{ s.name }}</td><td>{{ s.semester_number }}</td><td>{{ s.academic_year }}</td><td>{{ s.start_date }}</td><td>{{ s.end_date }}</td>
+        <td>{% if s.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
+        <td class="text-end">
+          <a href="{% url 'academics:semester_edit' s.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+          <form method="post" action="{% url 'academics:semester_delete' s.pk %}" class="d-inline" data-confirm="Delete this semester?">
+            {% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="7"><div class="empty-state">No semesters yet.</div></td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% include "includes/pagination.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<h4 class="mb-4">Welcome, {{ user.get_full_name|default:user.username }}</h4>
+
+<div class="row g-3 mb-4">
+  {% include "dashboard/_stat_card.html" with label="CGPA" value=cgpa icon="bi-award" color="#4f46e5" %}
+  {% include "dashboard/_stat_card.html" with label="Overall Attendance" value=attendance.overall_percentage suffix="%" icon="bi-calendar-check" color="#059669" %}
+  {% include "dashboard/_stat_card.html" with label="Enrolled Courses" value=enrollments.count icon="bi-journal-bookmark" color="#d97706" %}
+  {% include "dashboard/_stat_card.html" with label="Risk Level" value=risk.risk_level icon="bi-shield-exclamation" color="#dc2626" %}
+</div>
+
+{% if risk.reasons %}
+<div class="alert alert-warning">
+  <strong>Academic Warning ({{ risk.risk_level }}):</strong>
+  <ul class="mb-0 small">{% for r in risk.reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card p-3"><h6>Grade Distribution</h6><canvas id="chartGrades" height="200"></canvas></div></div>
+  <div class="col-lg-6"><div class="card p-3"><h6>GPA Trend by Semester</h6><canvas id="chartGpaTrend" height="200"></canvas></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <h6>Upcoming Assignments</h6>
+      {% for a in upcoming_assignments %}
+        <div class="border-bottom py-2 small"><strong>{{ a.title }}</strong><br><span class="text-muted">Due {{ a.due_date|date:"M d, H:i" }}</span></div>
+      {% empty %}<p class="text-muted small">No upcoming assignments.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <h6>Upcoming Examinations</h6>
+      {% for e in upcoming_exams %}
+        <div class="border-bottom py-2 small"><strong>{{ e.name }}</strong><br><span class="text-muted">{{ e.course.course_code }} - {{ e.exam_date }}</span></div>
+      {% empty %}<p class="text-muted small">None scheduled.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <h6>Recent Results</h6>
+      {% for r in recent_results %}
+        <div class="border-bottom py-2 small d-flex justify-content-between"><span>{{ r.examination.name }}</span><span class="fw-semibold">{{ r.grade }}</span></div>
+      {% empty %}<p class="text-muted small">No published results yet.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+
+{{ chart_grade_distribution|json_script:"data-grades" }}
+{{ chart_gpa_trend|json_script:"data-gpa-trend" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function readData(id) { return JSON.parse(document.getElementById(id).textContent); }
+new Chart(document.getElementById('chartGrades'), {
+  type: 'doughnut', data: { labels: readData('data-grades').labels, datasets: [{ data: readData('data-grades').data, backgroundColor: ["#4f46e5","#059669","#d97706","#dc2626","#0891b2","#7c3aed"] }] }
+});
+new Chart(document.getElementById('chartGpaTrend'), {
+  type: 'line', data: { labels: readData('data-gpa-trend').labels, datasets: [{ label: 'GPA', data: readData('data-gpa-trend').data, borderColor: '#4f46e5', tension: .3 }] },
+  options: { scales: { y: { min: 0, max: 10 } } }
+});
+</script>
+{% endblock %}

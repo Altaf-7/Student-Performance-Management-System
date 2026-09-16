@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}My Results{% endblock %}
+{% block content %}
+<h4 class="mb-3">My Results</h4>
+<div class="card p-3 mb-3 d-flex flex-row align-items-center gap-3">
+  <span class="badge bg-primary fs-6">CGPA: {{ cgpa_data.cgpa }}</span>
+</div>
+<div class="card p-3 mb-4">
+  <table class="table">
+    <thead><tr><th>Examination</th><th>Course</th><th>Marks</th><th>Percentage</th><th>Grade</th></tr></thead>
+    <tbody>
+    {% for r in results %}<tr><td>{{ r.examination.name }}</td><td>{{ r.course.course_code }}</td><td>{{ r.obtained_marks }}/{{ r.maximum_marks }}</td><td>{{ r.obtained_marks|floatformat:2 }}</td><td><strong>{{ r.grade }}</strong></td></tr>
+    {% empty %}<tr><td colspan="5"><div class="empty-state">No published results yet.</div></td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="card p-3">
+  <h6>Semester-wise GPA &amp; Marksheets</h6>
+  <table class="table">
+    <thead><tr><th>Semester</th><th>GPA</th><th>Credits</th><th></th></tr></thead>
+    <tbody>
+    {% for s in cgpa_data.semesters %}
+      <tr>
+        <td>{{ s.semester }}</td><td>{{ s.gpa }}</td><td>{{ s.total_credits }}</td>
+        <td><a href="{% url 'examinations:marksheet' user.id s.semester.id %}" class="btn btn-sm btn-outline-primary">View</a>
+        <a href="{% url 'examinations:marksheet' user.id s.semester.id %}?format=pdf" class="btn btn-sm btn-outline-secondary">Download PDF</a></td>
+      </tr>
+    {% empty %}<tr><td colspan="4" class="text-muted">No semester results yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
