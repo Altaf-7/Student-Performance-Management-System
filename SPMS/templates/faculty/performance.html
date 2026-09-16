@@ -1,0 +1,41 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Faculty Performance Overview{% endblock %}
+{% block page_subtitle %}Academic performance summary for your subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Subject Performance</h2>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Course/Batch</th>
+                    <th>Students</th>
+                    <th>Total Lectures</th>
+                    <th>Avg. Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offering in offerings %}
+                <tr>
+                    <td>{{ offering.subject.name }} ({{ offering.subject.code }})</td>
+                    <td>{{ offering.semester.course_batch.course.name }} / {{ offering.semester.course_batch.academic_year }}</td>
+                    <td>{{ offering.semester.students.count }}</td>
+                    <td>{{ offering.lectures.count }}</td>
+                    <td>--</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No subjects assigned.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

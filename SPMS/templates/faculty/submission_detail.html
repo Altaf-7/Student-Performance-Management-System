@@ -1,0 +1,64 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Grade Submission{% endblock %}
+{% block page_subtitle %}{{ object.student.user.get_full_name }} ({{ object.student.enrollment_no }}) - {{ object.assignment.title }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section" style="max-width: 800px;">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty:submissions' assignment_id=object.assignment.id %}" class="btn btn-secondary">&larr; Back to Submissions</a>
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;" class="form-container">
+            <h3 style="margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Submission Details</h3>
+            <p><strong>Assignment:</strong> <a href="{% url 'faculty:assignment_detail' pk=object.assignment.id %}">{{ object.assignment.title }}</a></p>
+            <p><strong>Due Date:</strong> {{ object.assignment.due_datetime|date:"d M Y, H:i" }}</p>
+            <p><strong>Submitted At:</strong> {{ object.submitted_at|date:"d M Y, H:i" }}</p>
+            <p><strong>Status:</strong> <span style="font-weight: 500; {% if object.status == 'late' %}color: #f57c00;{% else %}color: #2e7d32;{% endif %}">{{ object.get_status_display }}</span></p>
+            
+            {% if object.submission_file %}
+                <div style="margin-top: 15px; padding: 10px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px;">
+                    <a href="{% url 'faculty:download_submission' object.id %}" target="_blank" style="display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 500;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        View Submission File
+                    </a>
+                </div>
+            {% else %}
+                <p style="margin-top: 15px; color: var(--muted);">No file attached.</p>
+            {% endif %}
+        </div>
+
+        <div style="flex: 1; min-width: 300px;" class="form-container">
+            <h3 style="margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Evaluation</h3>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.marks_awarded.id_for_label }}">Marks Awarded (Max: {{ object.assignment.maximum_marks }})</label>
+                    {{ form.marks_awarded }}
+                    {% if form.marks_awarded.errors %}<div style="color: red; font-size: 0.85em;">{{ form.marks_awarded.errors }}</div>{% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.feedback.id_for_label }}">Feedback</label>
+                    {{ form.feedback }}
+                    {% if form.feedback.errors %}<div style="color: red; font-size: 0.85em;">{{ form.feedback.errors }}</div>{% endif %}
+                </div>
+                
+                {% if form.non_field_errors %}
+                    <div style="color: red; font-size: 0.85em; margin-bottom: 15px;">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">Save Grade</button>
+                </div>
+                
+                {% if object.graded_at %}
+                    <p style="margin-top: 15px; font-size: 12px; color: var(--muted);">Last graded at: {{ object.graded_at|date:"d M Y, H:i" }}</p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

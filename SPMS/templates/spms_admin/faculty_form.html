@@ -1,0 +1,122 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}Add New Faculty{% endblock %}
+{% block page_subtitle %}Create a new faculty account and profile{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'spms_admin:faculty_list' %}" class="btn btn-secondary">&larr; Back to Faculty</a>
+    </div>
+
+    <form method="post" class="form-container" style="max-width: 800px;">
+        {% csrf_token %}
+        
+        <h3 style="margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">User Information</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.first_name.id_for_label }}">First Name</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.last_name.id_for_label }}">Last Name</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.last_name.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.contact_number.id_for_label }}">Contact Number</label>
+                {{ form.contact_number }}
+                {% if form.contact_number.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.contact_number.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h3 style="margin-top: 20px; margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Faculty Profile</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.department.id_for_label }}">Department</label>
+                {{ form.department }}
+                {% if form.department.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.department.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.designation.id_for_label }}">Designation</label>
+                {{ form.designation }}
+                {% if form.designation.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.designation.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.specialization.id_for_label }}">Specialization</label>
+                {{ form.specialization }}
+                {% if form.specialization.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.specialization.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 250px;">
+                <label class="form-label" for="{{ form.qualification.id_for_label }}">Qualification</label>
+                {{ form.qualification }}
+                {% if form.qualification.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.qualification.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h3 style="margin-top: 20px; margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Office Information</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label class="form-label" for="{{ form.office_email.id_for_label }}">Office Email</label>
+                {{ form.office_email }}
+                {% if form.office_email.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.office_email.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label class="form-label" for="{{ form.office_contact.id_for_label }}">Office Contact</label>
+                {{ form.office_contact }}
+                {% if form.office_contact.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.office_contact.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label class="form-label" for="{{ form.date_of_join.id_for_label }}">Date of Join</label>
+                {{ form.date_of_join }}
+                {% if form.date_of_join.errors %}
+                    <div style="color: red; font-size: 0.85em; margin-top: 5px;">{{ form.date_of_join.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if form.non_field_errors %}
+            <div style="color: red; font-size: 0.85em; margin-top: 5px; margin-bottom: 15px;">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">Create Faculty</button>
+            <p style="font-size: 12px; color: var(--muted); margin-top: 10px;">Note: A temporary password will be automatically generated and displayed on the next screen.</p>
+        </div>
+    </form>
+</div>
+{% endblock %}

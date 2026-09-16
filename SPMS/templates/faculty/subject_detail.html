@@ -1,0 +1,82 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}{{ offering.subject.name }}{% endblock %}
+{% block page_subtitle %}{{ offering.subject.code }} • {{ offering.semester.course_batch.course.name }} (Sem {{ offering.semester.semester_number }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section" style="display: flex; gap: 15px; margin-bottom: 20px;">
+    <a href="{% url 'faculty:students' pk=offering.pk %}" class="btn btn-secondary">View Students ({{ students_count }})</a>
+    <a href="{% url 'faculty:attendance_summary' offering_id=offering.pk %}" class="btn btn-secondary">Attendance Summary</a>
+    <a href="{% url 'faculty:lecture_create' %}?offering={{ offering.pk }}" class="btn btn-primary">Add Lecture</a>
+    <a href="{% url 'faculty:assignment_create' %}?offering={{ offering.pk }}" class="btn btn-primary">Create Assignment</a>
+    <a href="{% url 'faculty:exam_create' %}?offering={{ offering.pk }}" class="btn btn-primary">Schedule Exam</a>
+</div>
+
+<div class="stat-grid">
+    <div class="dashboard-section" style="margin-bottom: 0;">
+        <div class="section-header">
+            <h2 class="section-title">Recent Lectures</h2>
+            <a href="{% url 'faculty:lectures' offering_id=offering.pk %}" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">View All</a>
+        </div>
+        <div class="data-list">
+            {% for lecture in recent_lectures %}
+            <div class="data-item">
+                <div>
+                    <div class="data-main">{{ lecture.date }}</div>
+                    <div class="data-sub">{{ lecture.start_time }} - {{ lecture.end_time }}</div>
+                </div>
+                <div class="data-meta">
+                    <a href="{% url 'faculty:lecture_detail' pk=lecture.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Detail</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="data-item"><div class="data-main" style="color: var(--muted);">No lectures recorded.</div></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="dashboard-section" style="margin-bottom: 0;">
+        <div class="section-header">
+            <h2 class="section-title">Assignments</h2>
+            <a href="{% url 'faculty:assignments' %}" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">View All</a>
+        </div>
+        <div class="data-list">
+            {% for assignment in recent_assignments %}
+            <div class="data-item">
+                <div>
+                    <div class="data-main">{{ assignment.title }}</div>
+                    <div class="data-sub">Due: {{ assignment.due_datetime }} • Status: {{ assignment.get_status_display }}</div>
+                </div>
+                <div class="data-meta">
+                    <a href="{% url 'faculty:assignment_detail' pk=assignment.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Detail</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="data-item"><div class="data-main" style="color: var(--muted);">No assignments created.</div></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-section" style="margin-top: 30px;">
+    <div class="section-header">
+        <h2 class="section-title">Scheduled Exams</h2>
+        <a href="{% url 'faculty:exams' %}" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">View All</a>
+    </div>
+    <div class="data-list">
+        {% for exam in upcoming_exams %}
+        <div class="data-item">
+            <div>
+                <div class="data-main">{{ exam.get_exam_term_display }} ({{ exam.get_exam_category_display }})</div>
+                <div class="data-sub">Date: {{ exam.exam_date }} • Total Marks: {{ exam.total_marks }}</div>
+            </div>
+            <div class="data-meta">
+                <a href="{% url 'faculty:exam_detail' pk=exam.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Detail</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="data-item"><div class="data-main" style="color: var(--muted);">No exams scheduled.</div></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

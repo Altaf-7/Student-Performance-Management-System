@@ -1,0 +1,40 @@
+{% extends 'student/base.html' %}
+{% block title %}Attendance Summary | SPMS{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Attendance Summary</h1>
+    <p>Your attendance for the current active semester.</p>
+</div>
+<div class="dashboard-grid">
+    {% for stat in attendance_data %}
+        {% include 'components/stat_card.html' with label=stat.offering.subject.code value=stat.percentage|stringformat:"s%%" subtitle=stat.offering.subject.name %}
+    {% empty %}
+        <div class="card" style="grid-column: 1 / -1;"><p class="empty-state">No active semester attendance data found.</p></div>
+    {% endfor %}
+</div>
+<div class="card" style="margin-top: 2rem;">
+    <h2>Subject-wise Breakdown</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Total Lectures</th>
+                <th>Attended</th>
+                <th>Percentage</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in attendance_data %}
+            <tr>
+                <td>{{ stat.offering.subject.name }}</td>
+                <td>{{ stat.total_lectures }}</td>
+                <td>{{ stat.attended_lectures }}</td>
+                <td>{{ stat.percentage }}%</td>
+                <td><a href="{% url 'students:subject_attendance' stat.offering.id %}" class="text-link">View Details &rarr;</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

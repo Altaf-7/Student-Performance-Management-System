@@ -1,0 +1,95 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}User Management{% endblock %}
+{% block page_subtitle %}Manage all platform users{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <!-- Filters and Search -->
+    <div style="margin-bottom: 20px; padding: 15px; background: var(--bg-secondary); border-radius: 6px; border: 1px solid var(--border-color);">
+        <form method="get" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="q">Search</label>
+                <input type="text" name="q" id="q" class="form-control" value="{{ search_query }}" placeholder="Name or Email">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="role">Role</label>
+                <select name="role" id="role" class="form-control">
+                    <option value="">All Roles</option>
+                    <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+                    <option value="faculty" {% if role_filter == 'faculty' %}selected{% endif %}>Faculty</option>
+                    <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="status">Status</label>
+                <select name="status" id="status" class="form-control">
+                    <option value="">All Statuses</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="margin-bottom: 0;">Filter</button>
+            {% if search_query or role_filter or status_filter %}
+            <a href="{% url 'spms_admin:users' %}" class="btn btn-secondary" style="margin-bottom: 0;">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.get_full_name|default:"--" }}</td>
+                    <td>{{ u.email }}</td>
+                    <td style="text-transform: capitalize;">{{ u.role }}</td>
+                    <td>
+                        {% if u.is_active %}
+                            <span style="color: #2e7d32; font-weight: bold;">Active</span>
+                        {% else %}
+                            <span style="color: #d32f2f; font-weight: bold;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ u.date_joined|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'spms_admin:user_detail' pk=u.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Detail</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--muted); padding: 20px;">No users found matching your criteria.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary">Previous</a>
+        {% endif %}
+        <span style="padding: 8px 12px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-color);">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

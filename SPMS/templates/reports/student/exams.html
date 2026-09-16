@@ -1,0 +1,85 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Examination Report{% endblock %}
+{% block page_subtitle %}Your performance in published examinations{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'student_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Total Exams</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">{{ summary.total }}</div>
+        </div>
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Exams Passed</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: #2e7d32;">{{ summary.passed }}</div>
+        </div>
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Exams Failed</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: #d32f2f;">{{ summary.failed }}</div>
+        </div>
+        <div class="stat-card" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 8px; text-align: center;">
+            <div style="color: var(--muted); font-size: 12px; text-transform: uppercase;">Average %</div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: #1976d2;">{{ summary.average_percentage }}%</div>
+        </div>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Exam</th>
+                    <th>Date</th>
+                    <th style="text-align: right;">Total Marks</th>
+                    <th style="text-align: right;">Obtained</th>
+                    <th style="text-align: right;">Percentage</th>
+                    <th style="text-align: right;">Grade</th>
+                    <th style="text-align: right;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in exam_results %}
+                <tr>
+                    <td>{{ result.exam.offering.subject.name }} ({{ result.exam.offering.subject.code }})</td>
+                    <td>{{ result.exam.get_exam_term_display }} - {{ result.exam.get_exam_category_display }}</td>
+                    <td>{{ result.exam.exam_date|date:"d M Y" }}</td>
+                    <td style="text-align: right;">{{ result.exam.total_marks }}</td>
+                    <td style="text-align: right;">
+                        {% if result.marks_obtained is not None %}
+                            {{ result.marks_obtained }}
+                        {% else %}
+                            <span style="color: var(--muted);">{{ result.get_attendance_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        {% if result.marks_obtained is not None %}
+                            {% widthratio result.marks_obtained result.exam.total_marks 100 %}%
+                        {% else %}
+                            --
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right; font-weight: bold;">
+                        {{ result.grade|default:"--" }}
+                    </td>
+                    <td style="text-align: right;">
+                        <span style="font-weight: 500; {% if result.result_status == 'Pass' %}color: #2e7d32;{% elif result.result_status == 'Fail' %}color: #d32f2f;{% else %}color: var(--muted);{% endif %}">
+                            {{ result.result_status|default:"--" }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; color: var(--muted); padding: 20px;">No published examination data available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

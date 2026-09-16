@@ -1,0 +1,77 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}Faculty{% endblock %}
+{% block page_subtitle %}Manage faculty members{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <form method="get" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; margin: 0;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="q">Search</label>
+                <input type="text" name="q" id="q" class="form-control" value="{{ search_query }}" placeholder="Name or Email">
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="margin-bottom: 0;">Search</button>
+            {% if search_query %}
+            <a href="{% url 'spms_admin:faculty_list' %}" class="btn btn-secondary" style="margin-bottom: 0;">Clear</a>
+            {% endif %}
+        </form>
+        
+        <a href="{% url 'spms_admin:faculty_create' %}" class="btn btn-primary">Add New Faculty</a>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Designation</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in faculties %}
+                <tr>
+                    <td>{{ f.user.get_full_name|default:"--" }}</td>
+                    <td>{{ f.user.email }}</td>
+                    <td>{{ f.designation }}</td>
+                    <td>{{ f.department.name|default:"--" }}</td>
+                    <td>
+                        {% if f.user.is_active %}
+                            <span style="color: #2e7d32; font-weight: bold;">Active</span>
+                        {% else %}
+                            <span style="color: #d32f2f; font-weight: bold;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'spms_admin:faculty_detail' pk=f.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Detail</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--muted); padding: 20px;">No faculty found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-secondary">Previous</a>
+        {% endif %}
+        <span style="padding: 8px 12px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-color);">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-secondary">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

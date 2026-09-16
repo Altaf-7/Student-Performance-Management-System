@@ -1,0 +1,45 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block page_subtitle %}{{ page_subtitle|default:"" }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+        <a href="{{ create_url }}" class="btn btn-primary">Add New</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    {% for col in columns %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in objects %}
+                <tr>
+                    {% for field in fields %}
+                        {% load getattr_filter %}
+                        <td>{{ obj|getattr:field|default:"--" }}</td>
+                    {% endfor %}
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="{% url edit_url_name pk=obj.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Edit</a>
+                            <a href="{% url delete_url_name pk=obj.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px; color: #d32f2f; border-color: #d32f2f;">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{{ columns|length|add:1 }}" style="text-align: center; color: var(--muted); padding: 20px;">No {{ page_title|lower }} found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

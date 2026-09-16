@@ -1,0 +1,41 @@
+{% extends 'students/base.html' %}
+
+{% block page_title %}Attendance Summary{% endblock %}
+{% block page_subtitle %}Your overall attendance across all subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Total Lectures</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Attendance %</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in attendance_data %}
+                <tr>
+                    <td>{{ item.offering.subject.name }} ({{ item.offering.subject.code }})</td>
+                    <td>{{ item.offering.get_subject_type_display }}</td>
+                    <td>{{ item.total_lectures }}</td>
+                    <td>{{ item.attended_lectures }}</td>
+                    <td>{{ item.total_lectures|add:"-"|add:item.attended_lectures }}</td>
+                    <td style="font-weight: bold; {% if item.percentage < 75 %}color: #d32f2f;{% else %}color: #388e3c;{% endif %}">{{ item.percentage|floatformat:1 }}%</td>
+                    <td><a href="{% url 'students:subject_attendance' offering_id=item.offering.id %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">View Log</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center" style="color: var(--muted); padding: 20px;">No attendance data available for your current semester.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

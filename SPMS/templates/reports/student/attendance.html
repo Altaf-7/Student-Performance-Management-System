@@ -1,0 +1,43 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Attendance Report{% endblock %}
+{% block page_subtitle %}Your attendance breakdown across all subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'student_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th style="text-align: right;">Total Lectures</th>
+                    <th style="text-align: right;">Present</th>
+                    <th style="text-align: right;">Absent</th>
+                    <th style="text-align: right;">Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in attendance_report %}
+                <tr>
+                    <td>{{ item.subject.name }} ({{ item.subject.code }})</td>
+                    <td style="text-align: right;">{{ item.total_lectures }}</td>
+                    <td style="text-align: right;">{{ item.present }}</td>
+                    <td style="text-align: right;">{{ item.absent }}</td>
+                    <td style="text-align: right; font-weight: 500; color: {% if item.attendance_percentage >= 75 %}#2e7d32{% else %}#d32f2f{% endif %};">
+                        {{ item.attendance_percentage }}%
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No attendance data available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

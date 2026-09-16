@@ -1,0 +1,74 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Individual Student Performance{% endblock %}
+{% block page_subtitle %}Analyze performance of students in your subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="form-container" style="margin-bottom: 25px;">
+        <form method="get" action="{% url 'faculty_reports:students' %}">
+            <div class="form-group">
+                <label for="offering_id">Select Subject Offering:</label>
+                <select name="offering_id" id="offering_id" class="form-control" onchange="this.form.submit()">
+                    <option value="">-- Select a Subject --</option>
+                    {% for offering in offerings %}
+                        <option value="{{ offering.id }}" {% if selected_offering_id == offering.id %}selected{% endif %}>
+                            {{ offering.subject.name }} ({{ offering.subject.code }}) - {{ offering.semester.course_batch.course.name }} B{{ offering.semester.course_batch.academic_year }} Sem {{ offering.semester.semester_number }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+
+    {% if performance_data %}
+    <div class="table-responsive form-container">
+        <h3>Performance Data for: {{ performance_data.offering.subject.name }}</h3>
+        <table class="table" style="margin-top: 15px;">
+            <thead>
+                <tr>
+                    <th>Enrollment No</th>
+                    <th>Name</th>
+                    <th style="text-align: right;">Attendance %</th>
+                    <th style="text-align: right;">Assignment %</th>
+                    <th style="text-align: right;">Exam %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in performance_data.student_data %}
+                <tr>
+                    <td>{{ item.student.enrollment_no }}</td>
+                    <td>{{ item.student.user.get_full_name }}</td>
+                    <td style="text-align: right; font-weight: 500; color: {% if item.attendance_percentage >= 75 %}#2e7d32{% else %}#d32f2f{% endif %};">
+                        {{ item.attendance_percentage }}%
+                    </td>
+                    <td style="text-align: right; font-weight: 500;">
+                        {{ item.assignment_percentage }}%
+                    </td>
+                    <td style="text-align: right; font-weight: 500; color: {% if item.exam_percentage >= 40 %}#2e7d32{% else %}#d32f2f{% endif %};">
+                        {{ item.exam_percentage }}%
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No active students in this offering.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif selected_offering_id %}
+    <div class="form-container" style="text-align: center; padding: 30px; color: var(--muted);">
+        Could not load data for the selected offering.
+    </div>
+    {% else %}
+    <div class="form-container" style="text-align: center; padding: 40px; color: var(--muted); font-style: italic;">
+        Please select a subject offering above to view student performance data.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

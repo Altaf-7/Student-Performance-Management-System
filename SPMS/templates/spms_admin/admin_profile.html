@@ -1,0 +1,24 @@
+{% extends 'spms_admin/base.html' %}
+
+{% block page_title %}Admin Profile{% endblock %}
+{% block page_subtitle %}Manage your administrative profile{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section" style="max-width: 600px;">
+    <div class="form-container">
+        <h3 style="margin-bottom: 15px; font-size: 16px;">Account Details</h3>
+        <p><strong>Name:</strong> {{ request.user.get_full_name|default:"Not Set" }}</p>
+        <p><strong>Email:</strong> {{ request.user.email }}</p>
+        <p><strong>Contact:</strong> {{ request.user.contact_number|default:"--" }}</p>
+        <p><strong>Role:</strong> Administrator</p>
+        
+        {% if admin_profile %}
+            <p><strong>Designation:</strong> {{ admin_profile.designation|default:"--" }}</p>
+        {% endif %}
+
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+            <a href="{% url 'accounts:change_password' %}" class="btn btn-secondary">Change Password</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

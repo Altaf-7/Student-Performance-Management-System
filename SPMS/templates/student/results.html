@@ -1,0 +1,51 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Exam Results{% endblock %}
+{% block page_subtitle %}Your latest examination results for published exams{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Exam</th>
+                    <th>Date</th>
+                    <th>Total Marks</th>
+                    <th>Marks Obtained</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.exam.offering.subject.name }} ({{ result.exam.offering.subject.code }})</td>
+                    <td>{{ result.exam.get_exam_term_display }}</td>
+                    <td>{{ result.exam.exam_date|date:"d M Y" }}</td>
+                    <td>{{ result.exam.total_marks }}</td>
+                    <td>
+                        {% if result.attendance_status == 'present' %}
+                            {{ result.marks_obtained|default:"N/A" }}
+                        {% else %}
+                            <span style="color: var(--muted);">{{ result.get_attendance_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-weight: 500;">{{ result.grade|default:"--" }}</td>
+                    <td>
+                        <span style="font-weight: 500; {% if result.result_status == 'Pass' %}color: #2e7d32;{% elif result.result_status == 'Fail' %}color: #d32f2f;{% else %}color: var(--muted);{% endif %}">
+                            {{ result.result_status|default:"Pending" }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center" style="color: var(--muted); padding: 20px;">No published results found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Exam Details{% endblock %}
+{% block page_subtitle %}{{ exam.offering.subject.name }} - {{ exam.get_exam_term_display }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section" style="max-width: 800px;">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'students:exams' %}" class="btn btn-secondary">&larr; Back to Exams</a>
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 2; min-width: 300px;" class="form-container">
+            <h3 style="margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Exam Information</h3>
+            <p><strong>Subject:</strong> {{ exam.offering.subject.name }} ({{ exam.offering.subject.code }})</p>
+            <p><strong>Category:</strong> {{ exam.get_exam_category_display }}</p>
+            <p><strong>Date:</strong> {{ exam.exam_date|date:"d M Y" }}</p>
+            <p><strong>Maximum Marks:</strong> {{ exam.total_marks }}</p>
+            <p><strong>Status:</strong> {{ exam.get_status_display }}</p>
+            
+            {% if exam.description %}
+            <div style="margin-top: 15px;">
+                <strong>Description:</strong>
+                <p style="margin-top: 5px; color: var(--text-color);">{{ exam.description|linebreaksbr }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="flex: 1; min-width: 300px;" class="form-container">
+            <h3 style="margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">My Result</h3>
+            
+            {% if exam.status == 'published' %}
+                {% if result %}
+                    <p><strong>Attendance:</strong> {{ result.get_attendance_status_display }}</p>
+                    {% if result.attendance_status == 'present' %}
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                            <p><strong>Marks Obtained:</strong> <span style="font-size: 1.2em; font-weight: bold; color: #1976d2;">{{ result.marks_obtained }} / {{ exam.total_marks }}</span></p>
+                            <p style="margin-top: 10px;"><strong>Grade:</strong> <span style="font-weight: bold;">{{ result.grade }}</span></p>
+                            <p style="margin-top: 10px;"><strong>Result:</strong> <span style="font-weight: 500; {% if result.result_status == 'Pass' %}color: #2e7d32;{% else %}color: #d32f2f;{% endif %}">{{ result.result_status }}</span></p>
+                        </div>
+                    {% else %}
+                        <p style="margin-top: 15px; color: var(--muted);">You were marked absent or on medical leave for this exam.</p>
+                    {% endif %}
+                {% else %}
+                    <p style="margin-top: 20px; color: var(--muted); font-style: italic;">No result recorded for you.</p>
+                {% endif %}
+            {% else %}
+                <div style="padding: 15px; background: #f5f5f5; border-radius: 4px; text-align: center;">
+                    <strong>Result not published yet.</strong>
+                    <p style="margin-top: 5px; font-size: 13px; color: var(--muted);">Results will be visible here once verified and published by the faculty.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

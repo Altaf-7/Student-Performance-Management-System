@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Student Performance Management System - a modern platform for managing academic performance, attendance, assignments and examinations.">
+    <title>SPMS | Elevate Academic Performance</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}?v=3.0">
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="#" class="brand" aria-label="SPMS home">
+            <span class="brand-mark"></span>
+            SPMS
+        </a>
+
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="#features">Features</a>
+            <a href="{% url 'accounts:login' %}">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <img src="{% static 'hero_bg.jpg' %}" alt="Abstract Background" class="hero-bg">
+            <div class="hero-content">
+                <p class="eyebrow">Student Performance Management</p>
+                <h1>Track performance.<br><span class="gradient-text">Build better outcomes.</span></h1>
+                <p class="hero-copy">
+                    A centralized, intelligent academic platform to seamlessly manage attendance, assignments, examinations, and student success in one place.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="{% url 'accounts:login' %}">Get Started</a>
+                    <a class="btn btn-secondary" href="#features">Explore Features</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features section-padding" id="features">
+            <div class="section-heading">
+                <span class="section-label">THE PLATFORM</span>
+                <h2>Everything academic, connected.</h2>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card glass-panel">
+                    <div class="card-icon">📊</div>
+                    <h3>Student Performance</h3>
+                    <p>View comprehensive insights into marks, semester results, SGPA, and track academic progress across terms from a single, unified dashboard.</p>
+                </article>
+
+                <article class="feature-card glass-panel">
+                    <div class="card-icon">✔️</div>
+                    <h3>Attendance Tracking</h3>
+                    <p>Effortlessly record and monitor lecture attendance with clear, intuitive workflows designed for both students and faculty members.</p>
+                </article>
+
+                <article class="feature-card glass-panel">
+                    <div class="card-icon">📝</div>
+                    <h3>Assignments & Exams</h3>
+                    <p>Streamline the entire examination and assignment lifecycle. Manage submissions, implement grading criteria, and maintain historical result data securely.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>© <span id="year"></span> SPMS Inc.</span>
+        <span>Empowering Education</span>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+
+</html>

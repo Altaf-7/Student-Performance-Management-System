@@ -1,0 +1,39 @@
+{% extends 'students/base.html' %}
+
+{% block page_title %}Attendance Details{% endblock %}
+{% block page_subtitle %}{{ offering.subject.name }} ({{ offering.subject.code }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'students:attendance_summary' %}" class="btn btn-secondary">&larr; Back to Summary</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for att in attendances %}
+                <tr>
+                    <td>{{ att.lecture.date }}</td>
+                    <td>{{ att.lecture.start_time }}</td>
+                    <td>{{ att.lecture.end_time }}</td>
+                    <td style="font-weight: 500; {% if att.status == 'present' %}color: #2e7d32;{% else %}color: #c62828;{% endif %}">{{ att.get_status_display }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center" style="color: var(--muted); padding: 20px;">No attendance records have been marked yet for this subject.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'student/base.html' %}
+
+{% block page_title %}Performance Analytics{% endblock %}
+{% block page_subtitle %}Visual trends of your academic progress{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'student_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+        <!-- SGPA Trend Chart -->
+        <div class="form-container">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">SGPA Trend</h3>
+            {% if chart_data.sgpa_data %}
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="sgpaChart"></canvas>
+            </div>
+            {% else %}
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-style: italic;">
+                Insufficient historical data for trend analysis.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Attendance Chart -->
+        <div class="form-container">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">Attendance by Subject</h3>
+            {% if chart_data.att_data %}
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+            {% else %}
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-style: italic;">
+                No attendance data available.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Colors mapping from our CSS (approximate hex values for Chart.js)
+        const primaryColor = '#1976d2';
+        const primaryLight = 'rgba(25, 118, 210, 0.2)';
+        const successColor = '#2e7d32';
+        const warningColor = '#f57c00';
+        const dangerColor = '#d32f2f';
+
+        // SGPA Chart
+        {% if chart_data.sgpa_data %}
+        const sgpaCtx = document.getElementById('sgpaChart').getContext('2d');
+        new Chart(sgpaCtx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_data.sgpa_labels|safe }},
+                datasets: [{
+                    label: 'SGPA',
+                    data: {{ chart_data.sgpa_data|safe }},
+                    borderColor: primaryColor,
+                    backgroundColor: primaryLight,
+                    borderWidth: 2,
+                    pointBackgroundColor: primaryColor,
+                    pointRadius: 4,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        {% endif %}
+
+        // Attendance Chart
+        {% if chart_data.att_data %}
+        const attCtx = document.getElementById('attendanceChart').getContext('2d');
+        
+        // Dynamically color bars based on threshold
+        const attData = {{ chart_data.att_data|safe }};
+        const bgColors = attData.map(val => val >= 75 ? successColor : dangerColor);
+        
+        new Chart(attCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_data.att_labels|safe }},
+                datasets: [{
+                    label: 'Attendance %',
+                    data: attData,
+                    backgroundColor: bgColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

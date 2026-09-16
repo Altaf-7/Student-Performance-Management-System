@@ -1,0 +1,49 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Assignment Completion Report{% endblock %}
+{% block page_subtitle %}Assignment submission rates across your subjects{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty_reports:dashboard' %}" class="btn btn-secondary">&larr; Back to Reports</a>
+    </div>
+
+    <div class="table-responsive form-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Assignment Title</th>
+                    <th style="text-align: right;">Total Students</th>
+                    <th style="text-align: right;">Submitted</th>
+                    <th style="text-align: right;">Late</th>
+                    <th style="text-align: right;">Not Submitted</th>
+                    <th style="text-align: right;">Pending Grading</th>
+                    <th style="text-align: right;">Submission Rate</th>
+                    <th style="text-align: right;">Avg Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in reports %}
+                <tr>
+                    <td>{{ item.assignment.offering.subject.name }} ({{ item.assignment.offering.subject.code }})</td>
+                    <td>{{ item.assignment.title }}</td>
+                    <td style="text-align: right;">{{ item.total_students }}</td>
+                    <td style="text-align: right; color: #2e7d32; font-weight: 500;">{{ item.submitted }}</td>
+                    <td style="text-align: right; color: #f57c00;">{{ item.late }}</td>
+                    <td style="text-align: right; color: #d32f2f;">{{ item.not_submitted }}</td>
+                    <td style="text-align: right; {% if item.pending_grading > 0 %}color: #f57c00; font-weight: bold;{% endif %}">{{ item.pending_grading }}</td>
+                    <td style="text-align: right; font-weight: 500;">{{ item.submission_rate }}%</td>
+                    <td style="text-align: right;">{{ item.average_marks|default:"--" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--muted); padding: 20px;">No assignments found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

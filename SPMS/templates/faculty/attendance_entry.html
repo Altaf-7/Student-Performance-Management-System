@@ -1,0 +1,52 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Mark Attendance{% endblock %}
+{% block page_subtitle %}{{ lecture.offering.subject.name }} | {{ lecture.date }} ({{ lecture.start_time }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty:lectures' offering_id=lecture.offering.id %}" class="btn btn-secondary">&larr; Back to Lectures</a>
+    </div>
+
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Enrollment No.</th>
+                        <th>Student Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in student_data %}
+                    <tr>
+                        <td>{{ item.student.enrollment_no }}</td>
+                        <td>{{ item.student.user.get_full_name }}</td>
+                        <td>
+                            <select name="status_{{ item.student.id }}" class="form-control" style="max-width: 150px; {% if item.status == 'present' %}border-color: #2e7d32; color: #2e7d32;{% elif item.status == 'absent' %}border-color: #c62828; color: #c62828;{% endif %}" required>
+                                <option value="" disabled {% if not item.status %}selected{% endif %}>---</option>
+                                <option value="present" {% if item.status == 'present' %}selected{% endif %}>Present</option>
+                                <option value="absent" {% if item.status == 'absent' %}selected{% endif %}>Absent</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center" style="color: var(--muted); padding: 20px;">No eligible students found for this lecture.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if student_data %}
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">Save Attendance</button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

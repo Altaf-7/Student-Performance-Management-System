@@ -1,0 +1,18 @@
+{% extends 'student/base.html' %}
+{% block title %}{{ offering.subject.name }} | SPMS{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ offering.subject.name }} ({{ offering.subject.code }})</h1>
+    <p>Faculty: {{ offering.faculty.user.get_full_name|default:offering.faculty.user.email|default:"Not Assigned" }}</p>
+</div>
+<div class="card">
+    <h2>Subject Overview</h2>
+    <p><strong>Type:</strong> {{ offering.get_subject_type_display }}</p>
+    <p><strong>Credits:</strong> {{ offering.credits }}</p>
+    <p><strong>Description:</strong> {{ offering.subject.description|default:"No description provided." }}</p>
+    
+    <div style="margin-top: 2rem;">
+        <a href="{% url 'students:subject_attendance' offering.id %}" class="btn btn-secondary">View Attendance</a>
+    </div>
+</div>
+{% endblock %}

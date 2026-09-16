@@ -1,0 +1,36 @@
+{% extends 'student/base.html' %}
+{% block title %}Current Subjects | SPMS{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Current Subjects</h1>
+    <p>Subjects enrolled in your active semester.</p>
+</div>
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Subject Name</th>
+                <th>Type</th>
+                <th>Credits</th>
+                <th>Faculty</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for offering in offerings %}
+            <tr>
+                <td>{{ offering.subject.code }}</td>
+                <td>{{ offering.subject.name }}</td>
+                <td>{{ offering.get_subject_type_display }}</td>
+                <td>{{ offering.credits }}</td>
+                <td>{{ offering.faculty.user.get_full_name|default:offering.faculty.user.email|default:"Not Assigned" }}</td>
+                <td><a href="{% url 'students:subject_detail' offering.id %}" class="text-link">View &rarr;</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="empty-state">No active subjects found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

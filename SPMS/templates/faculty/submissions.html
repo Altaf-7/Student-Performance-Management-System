@@ -1,0 +1,55 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Submissions{% endblock %}
+{% block page_subtitle %}For {{ assignment.title }} ({{ assignment.offering.subject.code }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'faculty:assignment_detail' pk=assignment.id %}" class="btn btn-secondary">&larr; Back to Assignment</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Enrollment No.</th>
+                    <th>Submitted At</th>
+                    <th>Status</th>
+                    <th>Marks</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in submissions %}
+                <tr>
+                    <td>{{ sub.student.user.get_full_name }}</td>
+                    <td>{{ sub.student.enrollment_no }}</td>
+                    <td>{{ sub.submitted_at|date:"d M H:i" }}</td>
+                    <td>
+                        <span style="font-weight: 500; {% if sub.status == 'submitted' %}color: #2e7d32;{% elif sub.status == 'late' %}color: #f57c00;{% endif %}">
+                            {{ sub.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if sub.marks_awarded is not None %}
+                            {{ sub.marks_awarded }} / {{ assignment.maximum_marks }}
+                        {% else %}
+                            <span style="color: var(--muted);">Not Graded</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'faculty:submission_detail' pk=sub.id %}" class="btn btn-primary" style="padding: 4px 8px; font-size: 11px;">Grade</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center" style="color: var(--muted); padding: 20px;">No submissions found for this assignment yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

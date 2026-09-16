@@ -1,0 +1,38 @@
+{% extends 'student/base.html' %}
+{% block title %}Academic Performance | SPMS{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Academic Performance</h1>
+    <p>Overview of your academic progression.</p>
+</div>
+<div class="dashboard-grid">
+    {% include 'components/stat_card.html' with label="Average SGPA" value=overall_sgpa|default:"N/A" subtitle="Across all completed semesters" %}
+    {% include 'components/stat_card.html' with label="Total Semesters" value=reports|length subtitle="Completed Semesters" %}
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <h2>Semester Progression</h2>
+    {% if reports %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Semester</th>
+                <th>SGPA</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td>Semester {{ report.semester.semester_number }}</td>
+                <td>{{ report.sgpa }}</td>
+                <td>{{ report.result_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="empty-state">Not enough data to display progression.</p>
+    {% endif %}
+</div>
+{% endblock %}

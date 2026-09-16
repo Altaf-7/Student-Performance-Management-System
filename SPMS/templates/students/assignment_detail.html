@@ -1,0 +1,79 @@
+{% extends 'students/base.html' %}
+
+{% block page_title %}{{ assignment.title }}{% endblock %}
+{% block page_subtitle %}{{ assignment.offering.subject.name }} ({{ assignment.offering.subject.code }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section" style="max-width: 800px;">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'students:assignments' %}" class="btn btn-secondary">&larr; Back to Assignments</a>
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 2; min-width: 300px;" class="form-container">
+            <h3 style="margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Assignment Details</h3>
+            <p><strong>Assigned:</strong> {{ assignment.assigned_at|date:"d M Y, H:i" }}</p>
+            <p><strong>Due Date:</strong> {{ assignment.due_datetime|date:"d M Y, H:i" }}</p>
+            <p><strong>Maximum Marks:</strong> {{ assignment.maximum_marks }}</p>
+            
+            {% if assignment.file_attachment %}
+                <p><strong>Attachment:</strong> <a href="{{ assignment.file_attachment.url }}" target="_blank">View File</a></p>
+            {% endif %}
+            
+            <div style="margin-top: 15px;">
+                <strong>Description:</strong>
+                <p style="margin-top: 5px; color: var(--text-color);">{{ assignment.description|default:"No description provided."|linebreaksbr }}</p>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <strong>Instructions:</strong>
+                <p style="margin-top: 5px; color: var(--text-color);">{{ assignment.instructions|default:"No instructions provided."|linebreaksbr }}</p>
+            </div>
+        </div>
+
+        <div style="flex: 1; min-width: 300px;" class="form-container">
+            <h3 style="margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">My Submission</h3>
+            
+            {% if submission %}
+                <p><strong>Submitted At:</strong> {{ submission.submitted_at|date:"d M Y, H:i" }}</p>
+                <p><strong>Status:</strong> <span style="font-weight: 500; {% if submission.status == 'late' %}color: #f57c00;{% else %}color: #2e7d32;{% endif %}">{{ submission.get_status_display }}</span></p>
+                
+                {% if submission.submission_file %}
+                    <p style="margin-top: 10px;">
+                        <a href="{{ submission.submission_file.url }}" target="_blank" style="display: inline-block; padding: 6px 12px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; text-decoration: none;">View Uploaded File</a>
+                    </p>
+                {% endif %}
+                
+                {% if submission.marks_awarded is not None %}
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                        <p><strong>Marks Awarded:</strong> <span style="font-size: 1.2em; font-weight: bold; color: #1976d2;">{{ submission.marks_awarded }} / {{ assignment.maximum_marks }}</span></p>
+                        {% if submission.feedback %}
+                            <p style="margin-top: 10px;"><strong>Feedback:</strong></p>
+                            <p style="font-style: italic; color: var(--text-color);">"{{ submission.feedback }}"</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p style="margin-top: 20px; color: var(--muted); font-style: italic;">Your submission is pending review.</p>
+                {% endif %}
+                
+            {% else %}
+                {% if assignment.status == 'active' %}
+                    <form method="post" action="{% url 'students:assignment_submit' pk=assignment.id %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.submission_file.id_for_label }}">Upload PDF</label>
+                            {{ form.submission_file }}
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">Submit Assignment</button>
+                    </form>
+                {% else %}
+                    <div style="padding: 15px; background: #ffebee; color: #c62828; border-radius: 4px; text-align: center;">
+                        <strong>Assignment Closed</strong>
+                        <p style="margin-top: 5px; font-size: 13px;">This assignment is no longer accepting submissions.</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

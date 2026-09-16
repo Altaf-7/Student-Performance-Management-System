@@ -1,0 +1,48 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Attendance Summary{% endblock %}
+{% block page_subtitle %}{{ offering.subject.name }} ({{ offering.semester.course_batch.course.code }} - {{ offering.semester.course_batch.academic_year }}){% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+        <a href="{% url 'faculty:lectures' offering_id=offering.id %}" class="btn btn-secondary">&larr; Back to Lectures</a>
+        <div style="font-weight: 500;">Total Lectures: {{ total_lectures }}</div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Enrollment No.</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in summary_data %}
+                <tr>
+                    <td>{{ item.student.user.get_full_name }}</td>
+                    <td>{{ item.student.enrollment_no }}</td>
+                    <td>{{ item.present }}</td>
+                    <td>{{ item.absent }}</td>
+                    <td style="font-weight: bold; {% if item.percentage < 75 %}color: #d32f2f;{% else %}color: #388e3c;{% endif %}">{{ item.percentage|floatformat:1 }}%</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center" style="color: var(--muted); padding: 20px;">
+                        {% if total_lectures == 0 %}
+                            No attendance data available. Total lectures is 0.
+                        {% else %}
+                            No enrolled students found.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
