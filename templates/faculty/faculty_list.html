@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Faculty{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Faculty</h4>
+  <a href="{% url 'faculty:faculty_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Faculty</a>
+</div>
+<div class="card p-3 mb-3">
+  <form method="get" class="row g-2">
+    <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="Search name, ID, email" value="{{ request.GET.q }}"></div>
+    <div class="col-md-3">
+      <select name="department" class="form-select">
+        <option value="">All Departments</option>
+        {% for d in departments %}<option value="{{ d.pk }}" {% if request.GET.department == d.pk|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Filter</button></div>
+  </form>
+</div>
+<div class="card p-3">
+  <table class="table table-hover">
+    <thead><tr><th>Faculty ID</th><th>Name</th><th>Department</th><th>Designation</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for f in faculty_members %}
+      <tr>
+        <td>{{ f.faculty_id }}</td>
+        <td><a href="{% url 'faculty:faculty_detail' f.pk %}">{{ f.user.get_full_name }}</a></td>
+        <td>{{ f.department|default:"-" }}</td><td>{{ f.get_designation_display }}</td>
+        <td><span class="badge bg-{% if f.is_active %}success{% else %}secondary{% endif %}">{% if f.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+        <td class="text-end">
+          <a href="{% url 'faculty:faculty_edit' f.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+          {% if f.is_active %}
+          <form method="post" action="{% url 'faculty:faculty_deactivate' f.pk %}" class="d-inline" data-confirm="Deactivate this faculty member?">{% csrf_token %}<button class="btn btn-sm btn-outline-warning"><i class="bi bi-person-dash"></i></button></form>
+          {% else %}
+          <form method="post" action="{% url 'faculty:faculty_activate' f.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-success"><i class="bi bi-person-check"></i></button></form>
+          {% endif %}
+          <form method="post" action="{% url 'faculty:faculty_delete' f.pk %}" class="d-inline" data-confirm="Permanently delete this faculty member?">{% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></form>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6"><div class="empty-state">No faculty found.</div></td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% include "includes/pagination.html" %}
+</div>
+{% endblock %}

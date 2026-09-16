@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Grade Submission{% endblock %}
+{% block content %}
+<h4 class="mb-3">Grade Submission</h4>
+<p class="text-muted">{{ submission.student.get_full_name }} - {{ submission.assignment.title }} (Max: {{ submission.assignment.maximum_marks }})</p>
+<p><a href="{{ submission.file.url }}" target="_blank" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark"></i> View Submitted File</a></p>
+<div class="card p-4" style="max-width:480px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3"><label class="form-label">Marks Obtained</label>{{ form.marks_obtained }}
+      {% for error in form.marks_obtained.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="mb-3"><label class="form-label">Feedback</label>{{ form.feedback }}</div>
+    <button type="submit" class="btn btn-primary">Submit Grade</button>
+  </form>
+</div>
+{% endblock %}

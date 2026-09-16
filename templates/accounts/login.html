@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block auth_content %}
+<div class="auth-wrapper">
+  <div class="card auth-card shadow-lg p-4">
+    <div class="text-center mb-3">
+      <i class="bi bi-mortarboard-fill" style="font-size:2.2rem;color:var(--spms-primary);"></i>
+      <h4 class="mt-2 mb-0">SPMS Login</h4>
+      <small class="text-muted">Student Performance Management System</small>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger py-2">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        {{ form.username }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        {{ form.password }}
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Sign In</button>
+    </form>
+    <div class="text-center mt-3">
+      <a href="{% url 'accounts:password_reset' %}" class="small">Forgot password?</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

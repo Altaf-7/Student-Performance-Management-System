@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block breadcrumbs %}<span class="text-muted">Dashboard</span>{% endblock %}
+{% block content %}
+<h4 class="mb-4">Admin Dashboard</h4>
+
+<div class="row g-3 mb-4">
+  {% include "dashboard/_stat_card.html" with label="Total Students" value=total_students icon="bi-people" color="#4f46e5" %}
+  {% include "dashboard/_stat_card.html" with label="Total Faculty" value=total_faculty icon="bi-person-badge" color="#059669" %}
+  {% include "dashboard/_stat_card.html" with label="Total Courses" value=total_courses icon="bi-journal-bookmark" color="#d97706" %}
+  {% include "dashboard/_stat_card.html" with label="Departments" value=total_departments icon="bi-building" color="#7c3aed" %}
+</div>
+<div class="row g-3 mb-4">
+  {% include "dashboard/_stat_card.html" with label="Active Students" value=active_students icon="bi-person-check" color="#059669" %}
+  {% include "dashboard/_stat_card.html" with label="Avg. Attendance" value=avg_attendance suffix="%" icon="bi-calendar-check" color="#0891b2" %}
+  {% include "dashboard/_stat_card.html" with label="Avg. Marks" value=avg_marks icon="bi-bar-chart" color="#4f46e5" %}
+  {% include "dashboard/_stat_card.html" with label="Avg. GPA" value=avg_gpa icon="bi-award" color="#d97706" %}
+  {% include "dashboard/_stat_card.html" with label="Students At Risk" value=at_risk_count icon="bi-exclamation-triangle" color="#dc2626" %}
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card p-3"><h6>Average Marks by Subject</h6><canvas id="chartMarksByCourse" height="200"></canvas></div></div>
+  <div class="col-lg-6"><div class="card p-3"><h6>Grade Distribution</h6><canvas id="chartGradeDist" height="200"></canvas></div></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-lg-4"><div class="card p-3"><h6>Attendance Distribution</h6><canvas id="chartAttendanceDist" height="200"></canvas></div></div>
+  <div class="col-lg-4"><div class="card p-3"><h6>Pass / Fail</h6><canvas id="chartPassFail" height="200"></canvas></div></div>
+  <div class="col-lg-4"><div class="card p-3"><h6>GPA Distribution</h6><canvas id="chartGpaDist" height="200"></canvas></div></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card p-3"><h6>Department-wise Performance</h6><canvas id="chartDeptPerf" height="200"></canvas></div></div>
+  <div class="col-lg-6"><div class="card p-3"><h6>Monthly Attendance</h6><canvas id="chartMonthlyAttendance" height="200"></canvas></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h6>Recent Examinations</h6>
+      {% for e in recent_exams %}
+        <div class="d-flex justify-content-between border-bottom py-2 small">
+          <span>{{ e.name }} ({{ e.course.course_code }})</span><span class="text-muted">{{ e.exam_date }}</span>
+        </div>
+      {% empty %}<p class="text-muted small">No examinations yet.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h6>Recent Announcements</h6>
+      {% for a in recent_announcements %}
+        <div class="border-bottom py-2 small"><strong>{{ a.title }}</strong><br><span class="text-muted">by {{ a.author.get_full_name }} - {{ a.created_at|date:"M d, Y" }}</span></div>
+      {% empty %}<p class="text-muted small">No announcements yet.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+
+{{ chart_marks_by_course|json_script:"data-marks-by-course" }}
+{{ chart_grade_distribution|json_script:"data-grade-dist" }}
+{{ chart_attendance_distribution|json_script:"data-attendance-dist" }}
+{{ chart_pass_fail|json_script:"data-pass-fail" }}
+{{ chart_gpa_distribution|json_script:"data-gpa-dist" }}
+{{ chart_department_performance|json_script:"data-dept-perf" }}
+{{ chart_monthly_attendance|json_script:"data-monthly-attendance" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function readData(id) { return JSON.parse(document.getElementById(id).textContent); }
+const palette = ["#4f46e5","#059669","#d97706","#dc2626","#0891b2","#7c3aed","#db2777","#65a30d"];
+
+new Chart(document.getElementById('chartMarksByCourse'), {
+  type: 'bar', data: { labels: readData('data-marks-by-course').labels, datasets: [{ label: 'Avg Marks', data: readData('data-marks-by-course').data, backgroundColor: '#4f46e5' }] },
+  options: { plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chartGradeDist'), {
+  type: 'doughnut', data: { labels: readData('data-grade-dist').labels, datasets: [{ data: readData('data-grade-dist').data, backgroundColor: palette }] }
+});
+new Chart(document.getElementById('chartAttendanceDist'), {
+  type: 'pie', data: { labels: readData('data-attendance-dist').labels, datasets: [{ data: readData('data-attendance-dist').data, backgroundColor: ['#059669','#d97706','#dc2626'] }] }
+});
+new Chart(document.getElementById('chartPassFail'), {
+  type: 'pie', data: { labels: readData('data-pass-fail').labels, datasets: [{ data: readData('data-pass-fail').data, backgroundColor: ['#059669','#dc2626'] }] }
+});
+new Chart(document.getElementById('chartGpaDist'), {
+  type: 'bar', data: { labels: readData('data-gpa-dist').labels, datasets: [{ label: 'Students', data: readData('data-gpa-dist').data, backgroundColor: '#7c3aed' }] },
+  options: { plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chartDeptPerf'), {
+  type: 'bar', data: { labels: readData('data-dept-perf').labels, datasets: [{ label: 'Avg Marks', data: readData('data-dept-perf').data, backgroundColor: '#0891b2' }] },
+  options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chartMonthlyAttendance'), {
+  type: 'line', data: { labels: readData('data-monthly-attendance').labels, datasets: [{ label: 'Attendance %', data: readData('data-monthly-attendance').data, borderColor: '#4f46e5', tension: .3 }] }
+});
+</script>
+{% endblock %}

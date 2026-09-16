@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Students</h4>
+  <a href="{% url 'students:student_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Student</a>
+</div>
+<div class="card p-3 mb-3">
+  <form method="get" class="row g-2">
+    <div class="col-md-3"><input type="text" name="q" class="form-control" placeholder="Search name, ID, email" value="{{ request.GET.q }}"></div>
+    <div class="col-md-2">
+      <select name="department" class="form-select">
+        <option value="">All Departments</option>
+        {% for d in departments %}<option value="{{ d.pk }}" {% if request.GET.department == d.pk|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="semester" class="form-select">
+        <option value="">All Semesters</option>
+        {% for s in semesters %}<option value="{{ s.pk }}" {% if request.GET.semester == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="status" class="form-select">
+        <option value="">All Status</option>
+        {% for val, label in status_choices %}<option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Filter</button></div>
+  </form>
+</div>
+<div class="card p-3">
+  <table class="table table-hover">
+    <thead><tr><th>Student ID</th><th>Name</th><th>Department</th><th>Semester</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for s in students %}
+      <tr>
+        <td>{{ s.student_id }}</td>
+        <td><a href="{% url 'students:student_detail' s.pk %}">{{ s.user.get_full_name }}</a></td>
+        <td>{{ s.department|default:"-" }}</td><td>{{ s.semester|default:"-" }}</td>
+        <td><span class="badge bg-{% if s.academic_status == 'ACTIVE' %}success{% elif s.academic_status == 'DEACTIVATED' %}secondary{% else %}warning{% endif %}">{{ s.get_academic_status_display }}</span></td>
+        <td class="text-end">
+          <a href="{% url 'students:student_edit' s.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+          {% if s.user.is_active %}
+          <form method="post" action="{% url 'students:student_deactivate' s.pk %}" class="d-inline" data-confirm="Deactivate this student?">{% csrf_token %}<button class="btn btn-sm btn-outline-warning"><i class="bi bi-person-dash"></i></button></form>
+          {% else %}
+          <form method="post" action="{% url 'students:student_activate' s.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-success"><i class="bi bi-person-check"></i></button></form>
+          {% endif %}
+          <form method="post" action="{% url 'students:student_delete' s.pk %}" class="d-inline" data-confirm="Permanently delete this student? This cannot be undone.">{% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></form>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6"><div class="empty-state">No students found.</div></td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% include "includes/pagination.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.user.get_full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-3 mb-4">
+  {% if profile.user.profile_photo %}<img src="{{ profile.user.profile_photo.url }}" class="rounded-circle" width="70" height="70" style="object-fit:cover;" alt="{{ profile.user.get_full_name }}">{% else %}<i class="bi bi-person-circle" style="font-size:4rem;color:#d1d5db;"></i>{% endif %}
+  <div>
+    <h4 class="mb-0">{{ profile.user.get_full_name }}</h4>
+    <span class="text-muted">{{ profile.student_id }} | {{ profile.department|default:"-" }} | {{ profile.semester|default:"-" }}</span>
+  </div>
+</div>
+<div class="row g-3 mb-4">
+  {% include "dashboard/_stat_card.html" with label="CGPA" value=dashboard.cgpa icon="bi-award" color="#4f46e5" %}
+  {% include "dashboard/_stat_card.html" with label="Attendance" value=dashboard.attendance.overall_percentage suffix="%" icon="bi-calendar-check" color="#059669" %}
+  {% include "dashboard/_stat_card.html" with label="Enrolled Courses" value=dashboard.enrollments.count icon="bi-journal-bookmark" color="#d97706" %}
+  {% include "dashboard/_stat_card.html" with label="Risk Level" value=dashboard.risk.risk_level icon="bi-shield-exclamation" color="#dc2626" %}
+</div>
+<div class="card p-3 mb-3">
+  <h6>Enrollments</h6>
+  <table class="table table-sm">
+    <thead><tr><th>Course</th><th>Semester</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for e in dashboard.enrollments %}<tr><td>{{ e.course.course_code }}</td><td>{{ e.semester }}</td><td>{{ e.status }}</td></tr>
+    {% empty %}<tr><td colspan="3" class="text-muted">No enrollments.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="card p-3">
+  <h6>Recent Results</h6>
+  <table class="table table-sm">
+    <thead><tr><th>Exam</th><th>Course</th><th>Marks</th><th>Grade</th></tr></thead>
+    <tbody>
+    {% for r in dashboard.recent_results %}<tr><td>{{ r.examination.name }}</td><td>{{ r.course.course_code }}</td><td>{{ r.obtained_marks }}/{{ r.maximum_marks }}</td><td>{{ r.grade }}</td></tr>
+    {% empty %}<tr><td colspan="4" class="text-muted">No published results.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Courses</h4>
+  {% if user.is_admin_role %}<a href="{% url 'academics:course_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Course</a>{% endif %}
+</div>
+<div class="card p-3 mb-3">
+  <form method="get" class="row g-2">
+    <div class="col-md-3"><input type="text" name="q" class="form-control" placeholder="Search code or name" value="{{ request.GET.q }}"></div>
+    <div class="col-md-3">
+      <select name="department" class="form-select">
+        <option value="">All Departments</option>
+        {% for d in departments %}<option value="{{ d.pk }}" {% if request.GET.department == d.pk|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select name="semester" class="form-select">
+        <option value="">All Semesters</option>
+        {% for s in semesters %}<option value="{{ s.pk }}" {% if request.GET.semester == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Filter</button></div>
+  </form>
+</div>
+<div class="card p-3">
+  <table class="table table-hover">
+    <thead><tr><th>Code</th><th>Name</th><th>Department</th><th>Semester</th><th>Faculty</th><th>Credits</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for c in courses %}
+      <tr>
+        <td><a href="{% url 'academics:course_detail' c.pk %}">{{ c.course_code }}</a></td><td>{{ c.course_name }}</td>
+        <td>{{ c.department.code }}</td><td>{{ c.semester }}</td><td>{{ c.faculty|default:"Unassigned" }}</td><td>{{ c.credits }}</td>
+        <td><span class="badge bg-{% if c.status == 'ACTIVE' %}success{% else %}secondary{% endif %}">{{ c.status }}</span></td>
+        <td class="text-end">
+          {% if user.is_admin_role %}
+          <a href="{% url 'academics:course_edit' c.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+          <form method="post" action="{% url 'academics:course_delete' c.pk %}" class="d-inline" data-confirm="Delete this course?">
+            {% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="8"><div class="empty-state">No courses found.</div></td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% include "includes/pagination.html" %}
+</div>
+{% endblock %}

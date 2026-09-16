@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Marksheet{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Marksheet - {{ semester }}</h4>
+  <a href="?format=pdf" class="btn btn-outline-primary"><i class="bi bi-download"></i> Download PDF</a>
+</div>
+<div class="card p-4">
+  <p><strong>Student:</strong> {{ student.get_full_name }} ({{ student.student_profile.student_id }})</p>
+  <table class="table">
+    <thead><tr><th>Course</th><th>Credits</th><th>Marks</th><th>Percentage</th><th>Grade</th><th>Grade Point</th></tr></thead>
+    <tbody>
+    {% for c in gpa_data.courses %}
+      <tr><td>{{ c.course.course_code }} - {{ c.course.course_name }}</td><td>{{ c.credits }}</td><td>{{ c.total_obtained }}/{{ c.total_max }}</td><td>{{ c.percentage }}%</td><td>{{ c.grade }}</td><td>{{ c.grade_point }}</td></tr>
+    {% empty %}<tr><td colspan="6" class="text-muted">No results for this semester yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  <h5 class="mt-3">Semester GPA: {{ gpa_data.gpa }}</h5>
+</div>
+{% endblock %}
