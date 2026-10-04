@@ -13,7 +13,7 @@
                                     <span style="font-size:12px; color:var(--muted, #666); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">Email Address</span>
                                     <strong id="credEmail-{{ forloop.counter }}" style="font-size:15px; user-select:all;"></strong>
                                 </div>
-                                <button onclick="copyIndividual('credEmail-{{ forloop.counter }}')" style="padding:6px 12px; background:var(--bg, white); border:1px solid var(--line, #ccc); border-radius:4px; cursor:pointer; font-size:12px; font-weight:500;">Copy Email</button>
+                                <button onclick="copyIndividual('credEmail-{{ forloop.counter }}', this)" style="padding:6px 12px; background:var(--bg, white); border:1px solid var(--line, #ccc); border-radius:4px; cursor:pointer; font-size:12px; font-weight:500;">Copy Email</button>
                             </div>
                             
                             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -21,7 +21,7 @@
                                     <span style="font-size:12px; color:var(--muted, #666); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">Temporary Password</span>
                                     <strong id="credPassword-{{ forloop.counter }}" style="font-size:15px; user-select:all; font-family:monospace;"></strong>
                                 </div>
-                                <button onclick="copyIndividual('credPassword-{{ forloop.counter }}')" style="padding:6px 12px; background:var(--bg, white); border:1px solid var(--line, #ccc); border-radius:4px; cursor:pointer; font-size:12px; font-weight:500;">Copy Password</button>
+                                <button onclick="copyIndividual('credPassword-{{ forloop.counter }}', this)" style="padding:6px 12px; background:var(--bg, white); border:1px solid var(--line, #ccc); border-radius:4px; cursor:pointer; font-size:12px; font-weight:500;">Copy Password</button>
                             </div>
                         </div>
                         
@@ -41,25 +41,55 @@
                     })();
                     
                     if (typeof copyIndividual !== 'function') {
-                        window.copyIndividual = function(elementId) {
-                            var textToCopy = document.getElementById(elementId).textContent;
-                            navigator.clipboard.writeText(textToCopy).then(function() {
-                                var btn = event.target;
-                                var originalText = btn.textContent;
-                                btn.textContent = 'Copied!';
-                                btn.style.background = '#e6f4ea';
-                                btn.style.borderColor = '#c6e3d2';
-                                btn.style.color = '#137333';
-                                setTimeout(function() {
-                                    btn.textContent = originalText;
-                                    btn.style.background = 'var(--bg, white)';
-                                    btn.style.borderColor = 'var(--line, #ccc)';
-                                    btn.style.color = 'var(--text, #333)';
-                                }, 2000);
-                            }).catch(function(err) {
-                                alert("Failed to copy text: " + err);
-                            });
+                        window.copyIndividual = function(elementId, btn) {
+                            var el = document.getElementById(elementId);
+                            var textToCopy = el ? el.textContent : '';
+                            if (!textToCopy) return;
+
+                            function markCopied() {
+                                if (btn) {
+                                    var originalText = btn.textContent;
+                                    btn.textContent = 'Copied!';
+                                    btn.style.background = '#e6f4ea';
+                                    btn.style.borderColor = '#c6e3d2';
+                                    btn.style.color = '#137333';
+                                    setTimeout(function() {
+                                        btn.textContent = originalText;
+                                        btn.style.background = 'var(--bg, white)';
+                                        btn.style.borderColor = 'var(--line, #ccc)';
+                                        btn.style.color = 'var(--text, #333)';
+                                    }, 2000);
+                                }
+                            }
+
+                            if (navigator.clipboard && window.isSecureContext) {
+                                navigator.clipboard.writeText(textToCopy).then(markCopied).catch(function() {
+                                    fallbackCopy(textToCopy, markCopied);
+                                });
+                            } else {
+                                fallbackCopy(textToCopy, markCopied);
+                            }
                         };
+
+                        function fallbackCopy(text, onSuccess) {
+                            var textArea = document.createElement("textarea");
+                            textArea.value = text;
+                            textArea.style.position = "fixed";
+                            textArea.style.left = "-9999px";
+                            textArea.style.top = "-9999px";
+                            document.body.appendChild(textArea);
+                            textArea.focus();
+                            textArea.select();
+                            try {
+                                var successful = document.execCommand('copy');
+                                if (successful && onSuccess) {
+                                    onSuccess();
+                                }
+                            } catch (err) {
+                                alert("Failed to copy credentials: " + err);
+                            }
+                            document.body.removeChild(textArea);
+                        }
                     }
                 </script>
             {% else %}

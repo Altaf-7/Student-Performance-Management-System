@@ -1,20 +1,21 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from accounts.views import CustomLoginView, StudentSignUpView, FacultySignUpView
-from django.views.generic import TemplateView
-from accounts.decorators import admin_required
+from accounts.views import CustomLoginView
+from accounts.forms import CustomPasswordResetForm, CustomSetPasswordForm
+from django.views.generic import RedirectView
 
 app_name = 'accounts'
 
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('register/student/', StudentSignUpView.as_view(), name='signup'),
-    path('register/faculty/', FacultySignUpView.as_view(), name='register_faculty'),
+    path('register/student/', RedirectView.as_view(pattern_name='accounts:login', permanent=False), name='signup'),
+    path('register/faculty/', RedirectView.as_view(pattern_name='accounts:login', permanent=False), name='register_faculty'),
     
     # Password reset views
     path('password-reset/', 
          auth_views.PasswordResetView.as_view(
+             form_class=CustomPasswordResetForm,
              template_name='authentication/password_reset_form.html',
              success_url='/password-reset/done/',
              email_template_name='authentication/password_reset_email.html'
@@ -27,6 +28,7 @@ urlpatterns = [
     
     path('password-reset-confirm/<uidb64>/<token>/', 
          auth_views.PasswordResetConfirmView.as_view(
+             form_class=CustomSetPasswordForm,
              template_name='authentication/password_reset_confirm.html',
              success_url='/password-reset-complete/'
          ), 

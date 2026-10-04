@@ -3,7 +3,8 @@ from django.views.generic import TemplateView, ListView, DetailView, View, Creat
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
 
 from spms_admin.mixins import AdminRequiredMixin
 from accounts.models import User
@@ -15,7 +16,31 @@ from examinations.models import Exam
 from django.db import transaction
 from django.db.models import ProtectedError
 from django.utils.crypto import get_random_string
-from .forms import StudentCreateForm, FacultyCreateForm
+from spms_admin.forms import StudentCreateForm, FacultyCreateForm
+
+
+def send_credentials_email(user, temp_password, role_name):
+    subject = f"Your SPMS {role_name} Account Credentials"
+    message = (
+        f"Hello {user.get_full_name() or user.email},\n\n"
+        f"Your {role_name.lower()} account for the Student Performance Management System (SPMS) has been created.\n\n"
+        f"Login Details:\n"
+        f"Username / Email: {user.email}\n"
+        f"Temporary Password: {temp_password}\n\n"
+        f"Please log in and update your password in your profile settings.\n\n"
+        f"Regards,\n"
+        f"SPMS Administration"
+    )
+    try:
+        send_mail(
+            subject,
+            message,
+            getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@spms.com'),
+            [user.email],
+            fail_silently=True
+        )
+    except Exception:
+        pass
 
 class AdminDashboardView(AdminRequiredMixin, TemplateView):
     template_name = 'spms_admin/dashboard.html'
@@ -188,6 +213,7 @@ class StudentCreateView(AdminRequiredMixin, View):
                         status=StudentSemester.StatusChoices.ACTIVE
                     )
                     
+                send_credentials_email(user, temp_password, 'Student')
                 messages.success(request, f"{user.email}|{temp_password}", extra_tags="credentials_modal")
                 return redirect('spms_admin:students')
             except Exception as e:
@@ -258,6 +284,7 @@ class FacultyCreateView(AdminRequiredMixin, View):
                         date_of_join=form.cleaned_data['date_of_join']
                     )
                     
+                send_credentials_email(user, temp_password, 'Faculty')
                 messages.success(request, f"{user.email}|{temp_password}", extra_tags="credentials_modal")
                 return redirect('spms_admin:faculty_list')
             except Exception as e:

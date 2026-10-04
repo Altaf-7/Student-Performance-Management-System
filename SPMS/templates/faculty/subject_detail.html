@@ -7,7 +7,7 @@
 <div class="dashboard-section" style="display: flex; gap: 15px; margin-bottom: 20px;">
     <a href="{% url 'faculty:students' pk=offering.pk %}" class="btn btn-secondary">View Students ({{ students_count }})</a>
     <a href="{% url 'faculty:attendance_summary' offering_id=offering.pk %}" class="btn btn-secondary">Attendance Summary</a>
-    <a href="{% url 'faculty:lecture_create' %}?offering={{ offering.pk }}" class="btn btn-primary">Add Lecture</a>
+    <a href="{% url 'faculty:lecture_create' offering_id=offering.pk %}" class="btn btn-primary">Add Lecture</a>
     <a href="{% url 'faculty:assignment_create' %}?offering={{ offering.pk }}" class="btn btn-primary">Create Assignment</a>
     <a href="{% url 'faculty:exam_create' %}?offering={{ offering.pk }}" class="btn btn-primary">Schedule Exam</a>
 </div>

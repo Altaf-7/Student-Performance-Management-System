@@ -17,20 +17,24 @@
                     <th>Student Name</th>
                     <th>Email</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for student_semester in students %}
                 <tr>
-                    <td>{{ student_semester.student.enrollment_no }}</td>
+                    <td><strong>{{ student_semester.student.enrollment_no }}</strong></td>
                     <td>{{ student_semester.student.user.get_full_name|default:"--" }}</td>
                     <td>{{ student_semester.student.user.email }}</td>
                     <td>
                         {% if student_semester.status == 'active' %}
-                        <span style="color: #2e7d32;">Active</span>
+                        <span class="badge badge-success">Active</span>
                         {% else %}
-                        <span style="color: #ed6c02;">Backlog</span>
+                        <span class="badge badge-warning">Backlog</span>
                         {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'faculty:student_detail' student_semester.student.pk %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">View Details &rarr;</a>
                     </td>
                 </tr>
                 {% empty %}

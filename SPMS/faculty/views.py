@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Avg, Q
 from django.contrib import messages
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.utils import timezone
 
 from accounts.models import User
@@ -140,6 +140,97 @@ class StudentListView(FacultyRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['offering'] = self.offering
+        return context
+
+class FacultyAllStudentsView(FacultyRequiredMixin, ListView):
+    template_name = 'faculty/all_students.html'
+    context_object_name = 'students'
+    paginate_by = 20
+
+    def get_queryset(self):
+        faculty = self.request.user.faculty_profile
+        offerings = SubjectOffering.objects.filter(faculty=faculty)
+        semester_ids = offerings.values_list('semester_id', flat=True).distinct()
+        
+        qs = Student.objects.filter(
+            semesters__semester_id__in=semester_ids,
+            semesters__status__in=[StudentSemester.StatusChoices.ACTIVE, StudentSemester.StatusChoices.BACKLOG]
+        ).select_related('user').distinct().order_by('enrollment_no')
+        
+        q = self.request.GET.get('q')
+        if q:
+            qs = qs.filter(
+                Q(user__first_name__icontains=q) |
+                Q(user__last_name__icontains=q) |
+                Q(enrollment_no__icontains=q) |
+                Q(user__email__icontains=q)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
+
+class FacultyStudentDetailView(FacultyRequiredMixin, DetailView):
+    model = Student
+    template_name = 'faculty/student_detail.html'
+    context_object_name = 'student'
+
+    def get_object(self):
+        faculty = self.request.user.faculty_profile
+        offerings = SubjectOffering.objects.filter(faculty=faculty)
+        semester_ids = offerings.values_list('semester_id', flat=True).distinct()
+        return get_object_or_404(
+            Student.objects.filter(semesters__semester_id__in=semester_ids).distinct(),
+            pk=self.kwargs.get('pk')
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        student = self.object
+        faculty = self.request.user.faculty_profile
+        faculty_offerings = SubjectOffering.objects.filter(faculty=faculty).select_related('subject')
+
+        # Academic courses and active semester
+        context['courses'] = student.courses_enrolled.select_related('course', 'course_batch').all()
+        context['active_semester'] = student.semesters.filter(status='active').select_related('semester__course_batch__course').first()
+
+        # Attendance in this faculty's subjects
+        attendance_stats = []
+        for offering in faculty_offerings:
+            lectures = offering.lectures.all()
+            total = lectures.count()
+            if total > 0:
+                attended = Attendance.objects.filter(student=student, lecture__in=lectures, status=Attendance.StatusChoices.PRESENT).count()
+                pct = round((attended / total) * 100, 1)
+                attendance_stats.append({
+                    'offering': offering,
+                    'total': total,
+                    'attended': attended,
+                    'percentage': pct,
+                })
+            else:
+                attendance_stats.append({
+                    'offering': offering,
+                    'total': 0,
+                    'attended': 0,
+                    'percentage': 0,
+                })
+        context['attendance_stats'] = attendance_stats
+
+        # Assignments submitted for this faculty's subjects
+        context['submissions'] = AssignmentSubmission.objects.filter(
+            student=student,
+            assignment__offering__in=faculty_offerings
+        ).select_related('assignment', 'assignment__offering__subject').order_by('-submitted_at')
+
+        # Exam results for this faculty's subjects
+        context['exam_results'] = ExamResult.objects.filter(
+            student=student,
+            exam__offering__in=faculty_offerings
+        ).select_related('exam', 'exam__offering__subject')
+
         return context
 
 # ==========================================
@@ -281,6 +372,44 @@ class AttendanceEntryView(FacultyRequiredMixin, View):
             messages.error(request, f"Error saving attendance: {e}")
             
         return redirect('faculty:lecture_detail', pk=lecture.id)
+
+
+class FacultyAttendanceDashboardView(FacultyRequiredMixin, TemplateView):
+    template_name = 'faculty/attendance_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        faculty = self.request.user.faculty_profile
+
+        offerings = SubjectOffering.objects.filter(
+            faculty=faculty
+        ).select_related('subject', 'semester', 'semester__course_batch', 'semester__course_batch__course')
+
+        offerings_data = []
+        total_lectures_all = 0
+        for off in offerings:
+            lec_count = Lecture.objects.filter(offering=off).count()
+            total_lectures_all += lec_count
+            students_count = StudentSemester.objects.filter(
+                semester=off.semester,
+                status__in=[StudentSemester.StatusChoices.ACTIVE, StudentSemester.StatusChoices.BACKLOG]
+            ).count()
+            offerings_data.append({
+                'offering': off,
+                'lectures_count': lec_count,
+                'students_count': students_count
+            })
+
+        recent_lectures = Lecture.objects.filter(
+            offering__faculty=faculty
+        ).select_related('offering', 'offering__subject').order_by('-date', '-start_time')[:10]
+
+        context['offerings_data'] = offerings_data
+        context['recent_lectures'] = recent_lectures
+        context['total_offerings_count'] = offerings.count()
+        context['total_lectures_count'] = total_lectures_all
+        return context
+
 
 class AttendanceSummaryView(FacultyRequiredMixin, TemplateView):
     template_name = 'faculty/attendance_summary.html'

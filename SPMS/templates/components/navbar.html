@@ -1,5 +1,5 @@
 <header class="navbar">
-    <a href="{% url 'landing_page' %}" class="brand" aria-label="SPMS home">
+    <a href="{% if request.user.is_authenticated %}{% if request.user.role == 'admin' or request.user.is_superuser %}{% url 'spms_admin:dashboard' %}{% elif request.user.role == 'faculty' %}{% url 'faculty:dashboard' %}{% else %}{% url 'students:dashboard' %}{% endif %}{% else %}{% url 'landing_page' %}{% endif %}" class="brand" aria-label="SPMS home">
         <span class="brand-mark"></span>
         SPMS
     </a>
@@ -18,9 +18,6 @@
         {% else %}
             {% if request.resolver_match.url_name != 'login' %}
                 <a href="{% url 'accounts:login' %}">Login</a>
-            {% endif %}
-            {% if request.resolver_match.url_name != 'signup' %}
-                <a href="{% url 'accounts:signup' %}">Register</a>
             {% endif %}
         {% endif %}
     </nav>

@@ -38,7 +38,9 @@
             <div class="sidebar-heading">Academic</div>
             <nav class="sidebar-nav">
                 <a href="{% url 'faculty:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="{% url 'faculty:subjects' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subjects' or request.resolver_match.url_name == 'subject_detail' or request.resolver_match.url_name == 'students' or request.resolver_match.url_name == 'lectures' or request.resolver_match.url_name == 'lecture_detail' or request.resolver_match.url_name == 'lecture_create' or request.resolver_match.url_name == 'lecture_update' or request.resolver_match.url_name == 'attendance_entry' or request.resolver_match.url_name == 'attendance_summary' %}active{% endif %}">Subjects</a>
+                <a href="{% url 'faculty:subjects' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subjects' or request.resolver_match.url_name == 'subject_detail' %}active{% endif %}">Subjects</a>
+                <a href="{% url 'faculty:faculty_students' %}" class="sidebar-link {% if request.resolver_match.url_name == 'faculty_students' or request.resolver_match.url_name == 'student_detail' or request.resolver_match.url_name == 'students' %}active{% endif %}">Students</a>
+                <a href="{% url 'faculty:attendance' %}" class="sidebar-link {% if request.resolver_match.url_name == 'attendance' or request.resolver_match.url_name == 'lectures' or request.resolver_match.url_name == 'lecture_detail' or request.resolver_match.url_name == 'lecture_create' or request.resolver_match.url_name == 'lecture_update' or request.resolver_match.url_name == 'attendance_entry' or request.resolver_match.url_name == 'attendance_summary' %}active{% endif %}">Attendance</a>
                 <a href="{% url 'faculty:assignments' %}" class="sidebar-link {% if request.resolver_match.url_name == 'assignments' or request.resolver_match.url_name == 'assignment_detail' or request.resolver_match.url_name == 'assignment_create' or request.resolver_match.url_name == 'submissions' or request.resolver_match.url_name == 'submission_detail' %}active{% endif %}">Assignments</a>
                 <a href="{% url 'faculty:exams' %}" class="sidebar-link {% if request.resolver_match.url_name == 'exams' or request.resolver_match.url_name == 'exam_detail' or request.resolver_match.url_name == 'exam_create' or request.resolver_match.url_name == 'exam_results' %}active{% endif %}">Exams</a>
             </nav>
@@ -61,10 +63,10 @@
             <div class="sidebar-heading">Academic</div>
             <nav class="sidebar-nav">
                 <a href="{% url 'students:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="{% url 'students:subjects' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subjects' %}active{% endif %}">Subjects</a>
-                <a href="{% url 'students:attendance_summary' %}" class="sidebar-link {% if request.resolver_match.url_name == 'attendance_summary' %}active{% endif %}">Attendance</a>
-                <a href="{% url 'students:assignments' %}" class="sidebar-link {% if request.resolver_match.url_name == 'assignments' %}active{% endif %}">Assignments</a>
-                <a href="{% url 'students:exams' %}" class="sidebar-link {% if request.resolver_match.url_name == 'exams' %}active{% endif %}">Exams</a>
+                <a href="{% url 'students:subjects' %}" class="sidebar-link {% if request.resolver_match.url_name == 'subjects' or request.resolver_match.url_name == 'subject_detail' %}active{% endif %}">Subjects</a>
+                <a href="{% url 'students:attendance_summary' %}" class="sidebar-link {% if request.resolver_match.url_name == 'attendance_summary' or request.resolver_match.url_name == 'subject_attendance' %}active{% endif %}">Attendance</a>
+                <a href="{% url 'students:assignments' %}" class="sidebar-link {% if request.resolver_match.url_name == 'assignments' or request.resolver_match.url_name == 'assignment_detail' or request.resolver_match.url_name == 'assignment_submit' %}active{% endif %}">Assignments</a>
+                <a href="{% url 'students:exams' %}" class="sidebar-link {% if request.resolver_match.url_name == 'exams' or request.resolver_match.url_name == 'exam_detail' %}active{% endif %}">Exams</a>
                 <a href="{% url 'students:results' %}" class="sidebar-link {% if request.resolver_match.url_name == 'results' %}active{% endif %}">Results</a>
             </nav>
         </div>

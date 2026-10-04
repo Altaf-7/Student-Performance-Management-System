@@ -1,63 +1,71 @@
 {% extends 'student/base.html' %}
 
 {% block page_title %}Student Dashboard{% endblock %}
-{% block page_subtitle %}Welcome back, {{ request.user.first_name|default:request.user.email }} — MCA, Semester 2 (Placeholder){% endblock %}
+{% block page_subtitle %}Welcome back, {{ request.user.get_full_name|default:request.user.email }}{% if course_info %} — {{ course_info }}{% endif %}{% endblock %}
 
 {% block dashboard_content %}
 <div class="stat-grid">
-    {% include 'components/stat_card.html' with label="Overall Attendance" value="85%" %}
-    {% include 'components/stat_card.html' with label="Current SGPA" value="8.4" %}
-    {% include 'components/stat_card.html' with label="Pending Assignments" value="3" %}
-    {% include 'components/stat_card.html' with label="Upcoming Exams" value="2" %}
+    {% include 'components/stat_card.html' with label="Overall Attendance" value=attendance_pct %}
+    {% include 'components/stat_card.html' with label="Current SGPA" value=current_sgpa %}
+    {% include 'components/stat_card.html' with label="Pending Assignments" value=pending_assignments_count %}
+    {% include 'components/stat_card.html' with label="Upcoming Exams" value=upcoming_exams_count %}
 </div>
 
 <div class="dashboard-section">
-    <div class="section-header">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
         <h2 class="section-title">Upcoming Assignments</h2>
+        <a href="{% url 'students:assignments' %}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;">View All</a>
     </div>
     <div class="data-list">
-        <!-- Mock Data for visual development -->
+        {% for assignment in upcoming_assignments %}
         <div class="data-item">
             <div>
-                <div class="data-main">Database Management Systems - Assignment 3</div>
-                <div class="data-sub">Subject: MCA-201</div>
+                <a href="{% url 'students:assignment_detail' assignment.id %}" class="data-main" style="text-decoration: none; color: inherit; font-weight: 600;">
+                    {{ assignment.title }}
+                </a>
+                <div class="data-sub">{{ assignment.offering.subject.name }} ({{ assignment.offering.subject.code }})</div>
             </div>
             <div class="data-meta">
                 <span class="badge badge-warning">Pending</span>
-                <div class="data-sub">Due: Oct 15, 2026</div>
+                <div class="data-sub">Due: {{ assignment.due_datetime|date:"M d, Y" }}</div>
             </div>
         </div>
+        {% empty %}
         <div class="data-item">
-            <div>
-                <div class="data-main">Operating Systems - Lab Report</div>
-                <div class="data-sub">Subject: MCA-202</div>
-            </div>
-            <div class="data-meta">
-                <span class="badge badge-success">Submitted</span>
-                <div class="data-sub">Due: Oct 10, 2026</div>
-            </div>
+            <div class="data-main" style="color: var(--muted); font-size: 14px;">No pending assignments due. You are all caught up!</div>
         </div>
-        <p style="color: var(--muted); font-size: 13px; margin-top: 15px;">* Data will appear here once the Assignment module is implemented.</p>
+        {% endfor %}
     </div>
 </div>
 
 <div class="dashboard-section">
-    <div class="section-header">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
         <h2 class="section-title">Recent Performance</h2>
+        <a href="{% url 'students:results' %}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;">All Results</a>
     </div>
     <div class="data-list">
-        <!-- Mock Data for visual development -->
+        {% for result in recent_results %}
         <div class="data-item">
             <div>
-                <div class="data-main">Mid-Term Examination</div>
-                <div class="data-sub">MCA-201 Database Management Systems</div>
+                <div class="data-main">{{ result.exam.get_exam_term_display }} - {{ result.exam.offering.subject.name }}</div>
+                <div class="data-sub">{{ result.exam.offering.subject.code }} • {{ result.exam.get_exam_category_display }}</div>
             </div>
             <div class="data-meta">
-                <div class="data-main">42/50</div>
-                <span class="badge badge-success" style="margin-top: 4px;">Pass</span>
+                <div class="data-main">{{ result.marks_obtained }} / {{ result.exam.total_marks }}</div>
+                {% if result.result_status == 'Pass' or result.is_pass %}
+                    <span class="badge badge-success" style="margin-top: 4px;">Pass</span>
+                {% elif result.result_status == 'Fail' %}
+                    <span class="badge badge-danger" style="margin-top: 4px;">Fail</span>
+                {% else %}
+                    <span class="badge badge-neutral" style="margin-top: 4px;">{{ result.result_status|default:"Pending" }}</span>
+                {% endif %}
             </div>
         </div>
-        <p style="color: var(--muted); font-size: 13px; margin-top: 15px;">* Data will appear here once the Examination module is implemented.</p>
+        {% empty %}
+        <div class="data-item">
+            <div class="data-main" style="color: var(--muted); font-size: 14px;">No exam results published yet.</div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

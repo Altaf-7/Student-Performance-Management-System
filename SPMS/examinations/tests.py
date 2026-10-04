@@ -27,16 +27,17 @@ class ExaminationsModelTests(TestCase):
         
         self.exam = Exam.objects.create(
             offering=self.offering,
-            exam_category='mid_term',
-            exam_term='theory',
+            exam_term=Exam.ExamTerm.MID_SEM,
+            exam_category=Exam.ExamCategory.WRITTEN,
             exam_date=datetime.date.today(),
-            maximum_marks=50
+            total_marks=50
         )
         
     def test_exam_result_marks_cannot_exceed_maximum(self):
         result = ExamResult(
             exam=self.exam,
             student=self.student,
+            attendance_status=ExamResult.AttendanceStatus.PRESENT,
             marks_obtained=60  # Greater than 50
         )
         with self.assertRaises(ValidationError):
@@ -46,6 +47,7 @@ class ExaminationsModelTests(TestCase):
         result = ExamResult(
             exam=self.exam,
             student=self.student,
+            attendance_status=ExamResult.AttendanceStatus.PRESENT,
             marks_obtained=-5
         )
         with self.assertRaises(ValidationError):

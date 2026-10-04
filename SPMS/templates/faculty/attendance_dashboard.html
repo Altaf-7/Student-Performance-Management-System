@@ -1,0 +1,83 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Attendance Management{% endblock %}
+{% block page_subtitle %}Record class lectures, mark daily attendance, and track attendance summaries{% endblock %}
+
+{% block dashboard_content %}
+<div class="stat-grid" style="margin-bottom: 25px;">
+    {% include 'components/stat_card.html' with label="Assigned Subjects" value=total_offerings_count %}
+    {% include 'components/stat_card.html' with label="Total Lectures Conducted" value=total_lectures_count %}
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Your Assigned Subjects</h2>
+    </div>
+    <div class="data-list">
+        {% for item in offerings_data %}
+        <div class="data-item" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <div class="data-main" style="font-size: 16px; font-weight: 600;">
+                    <a href="{% url 'faculty:subject_detail' pk=item.offering.pk %}" style="text-decoration: none; color: inherit;">
+                        {{ item.offering.subject.name }} ({{ item.offering.subject.code }})
+                    </a>
+                </div>
+                <div class="data-sub" style="margin-top: 4px;">
+                    {{ item.offering.semester.course_batch.course.name }} • Batch {{ item.offering.semester.course_batch.academic_year }} • Semester {{ item.offering.semester.semester_number }}
+                </div>
+                <div class="data-sub" style="margin-top: 4px; color: var(--muted);">
+                    Lectures: <strong>{{ item.lectures_count }}</strong> | Enrolled Students: <strong>{{ item.students_count }}</strong>
+                </div>
+            </div>
+            <div class="data-meta" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="{% url 'faculty:lecture_create' offering_id=item.offering.id %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 13px;">
+                    + Add Lecture
+                </a>
+                <a href="{% url 'faculty:lectures' offering_id=item.offering.id %}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;">
+                    View Lectures
+                </a>
+                <a href="{% url 'faculty:attendance_summary' offering_id=item.offering.id %}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;">
+                    Attendance Summary
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="data-item">
+            <div class="data-main" style="color: var(--muted);">You have no assigned subjects for attendance tracking.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Recent Lectures</h2>
+    </div>
+    <div class="data-list">
+        {% for lecture in recent_lectures %}
+        <div class="data-item" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <div class="data-main" style="font-weight: 600;">
+                    {{ lecture.offering.subject.name }} ({{ lecture.offering.subject.code }})
+                </div>
+                <div class="data-sub">
+                    {{ lecture.date|date:"M d, Y" }} &bull; {{ lecture.start_time|time:"H:i" }} - {{ lecture.end_time|time:"H:i" }}
+                </div>
+            </div>
+            <div class="data-meta" style="display: flex; gap: 8px;">
+                <a href="{% url 'faculty:attendance_entry' lecture_id=lecture.id %}" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">
+                    Mark Attendance
+                </a>
+                <a href="{% url 'faculty:lecture_detail' pk=lecture.id %}" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                    View
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="data-item">
+            <div class="data-main" style="color: var(--muted);">No lectures have been recorded yet. Click "+ Add Lecture" above to create one.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

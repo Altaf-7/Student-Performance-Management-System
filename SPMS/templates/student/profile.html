@@ -1,11 +1,10 @@
 {% extends 'student/base.html' %}
 {% block title %}My Profile | SPMS{% endblock %}
-{% block content %}
-<div class="dashboard-header">
-    <h1>My Profile</h1>
-    <p>Manage your personal and contact information.</p>
-</div>
-<div class="card" style="max-width: 600px;">
+{% block page_title %}My Profile{% endblock %}
+{% block page_subtitle %}Manage your personal and contact information.{% endblock %}
+
+{% block dashboard_content %}
+<div class="card" style="max-width: 650px;">
     <form method="post" class="auth-form">
         {% csrf_token %}
         {% for field in form %}

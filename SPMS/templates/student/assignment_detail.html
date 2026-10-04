@@ -1,15 +1,18 @@
 {% extends 'student/base.html' %}
 {% block title %}{{ assignment.title }} | SPMS{% endblock %}
-{% block content %}
-<div class="dashboard-header">
-    <h1>{{ assignment.title }}</h1>
-    <p>{{ assignment.offering.subject.name }} ({{ assignment.offering.subject.code }})</p>
+{% block page_title %}{{ assignment.title }}{% endblock %}
+{% block page_subtitle %}{{ assignment.offering.subject.name }} ({{ assignment.offering.subject.code }}){% endblock %}
+
+{% block dashboard_content %}
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'students:assignments' %}" class="btn btn-secondary">&larr; Back to Assignments</a>
 </div>
-<div class="dashboard-grid">
+
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
     <div class="card">
         <h2>Assignment Details</h2>
         <p><strong>Status:</strong> <span class="badge {% if assignment.status == 'active' %}badge-success{% else %}badge-error{% endif %}">{{ assignment.get_status_display }}</span></p>
-        <p><strong>Due Date:</strong> {{ assignment.due_datetime }}</p>
+        <p><strong>Due Date:</strong> {{ assignment.due_datetime|date:"M d, Y H:i" }}</p>
         <p><strong>Maximum Marks:</strong> {{ assignment.maximum_marks }}</p>
         
         <h3 style="margin-top: 1rem;">Description</h3>
@@ -28,17 +31,16 @@
     <div class="card">
         <h2>Your Submission</h2>
         {% if submission %}
-                <p><strong>Status:</strong> <span class="badge {% if submission.status == 'submitted' %}badge-success{% else %}badge-warning{% endif %}">{{ submission.get_status_display }}</span></p>
-                <p><strong>Submitted At:</strong> {{ submission.submitted_at|date:"M d, Y H:i" }}</p>
-                <p><strong>File:</strong> <a href="{% url 'students:download_submission' submission.id %}" class="text-link" target="_blank">View Submission</a></p>
-            </div>{% endif %}
+            <p><strong>Status:</strong> <span class="badge {% if submission.status == 'submitted' %}badge-success{% else %}badge-warning{% endif %}">{{ submission.get_status_display }}</span></p>
+            <p><strong>Submitted At:</strong> {{ submission.submitted_at|date:"M d, Y H:i" }}</p>
+            <p><strong>File:</strong> <a href="{% url 'students:download_submission' submission.id %}" class="text-link" target="_blank">View Submission</a></p>
             <hr style="border:none; border-top:1px solid var(--line); margin: 15px 0;">
             <h3>Grading</h3>
-            {% if submission.marks_awarded %}
+            {% if submission.marks_awarded is not None %}
                 <p><strong>Marks Awarded:</strong> {{ submission.marks_awarded }} / {{ assignment.maximum_marks }}</p>
                 <p><strong>Feedback:</strong> {{ submission.feedback|default:"None" }}</p>
             {% else %}
-                <p>Not graded yet.</p>
+                <p style="color: var(--muted);">Not graded yet.</p>
             {% endif %}
         {% else %}
             {% if assignment.status == 'active' %}

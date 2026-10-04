@@ -1,38 +1,41 @@
 {% extends 'student/base.html' %}
 {% block title %}Academic Performance | SPMS{% endblock %}
-{% block content %}
-<div class="dashboard-header">
-    <h1>Academic Performance</h1>
-    <p>Overview of your academic progression.</p>
-</div>
-<div class="dashboard-grid">
+{% block page_title %}Academic Performance{% endblock %}
+{% block page_subtitle %}Overview of your cumulative academic progression.{% endblock %}
+
+{% block dashboard_content %}
+<div class="stat-grid">
     {% include 'components/stat_card.html' with label="Average SGPA" value=overall_sgpa|default:"N/A" subtitle="Across all completed semesters" %}
     {% include 'components/stat_card.html' with label="Total Semesters" value=reports|length subtitle="Completed Semesters" %}
 </div>
 
-<div class="card" style="margin-top: 2rem;">
-    <h2>Semester Progression</h2>
-    {% if reports %}
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Semester</th>
-                <th>SGPA</th>
-                <th>Result</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for report in reports %}
-            <tr>
-                <td>Semester {{ report.semester.semester_number }}</td>
-                <td>{{ report.sgpa }}</td>
-                <td>{{ report.result_status }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <p class="empty-state">Not enough data to display progression.</p>
-    {% endif %}
+<div class="dashboard-section" style="margin-top: 2rem;">
+    <div class="section-header">
+        <h2 class="section-title">Semester Progression</h2>
+    </div>
+    <div class="table-responsive">
+        {% if reports %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Semester</th>
+                    <th>SGPA</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td><strong>Semester {{ report.semester.semester_number }}</strong></td>
+                    <td>{{ report.sgpa }}</td>
+                    <td><span class="badge badge-success">{{ report.result_status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty-state">No semester reports generated yet.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

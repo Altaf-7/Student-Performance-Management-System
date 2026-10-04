@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 import datetime
+from django.utils import timezone
 
 from accounts.models import User
 from academics.models import Department, Course, CourseBatch, Semester, Subject, SubjectOffering
@@ -52,10 +53,10 @@ class StudentModuleTests(TestCase):
         # Exam
         self.exam = Exam.objects.create(
             offering=self.offering,
-            exam_category='mid_term',
-            exam_term='theory',
+            exam_term=Exam.ExamTerm.MID_SEM,
+            exam_category=Exam.ExamCategory.WRITTEN,
             exam_date=datetime.date.today(),
-            maximum_marks=50,
+            total_marks=50,
             status='published'
         )
         

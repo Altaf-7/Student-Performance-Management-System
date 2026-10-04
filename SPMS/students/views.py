@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, Http404
-from django.http import FileResponse, Http404
 from django.views.generic import TemplateView, DetailView, ListView
 from django.utils.decorators import method_decorator
 from accounts.decorators import student_required
@@ -26,11 +25,75 @@ class StudentDashboardView(TemplateView):
         student = self.request.user.student_profile
         context['student'] = student
         
-        # Determine current active semester
-        active_sem = StudentSemester.objects.filter(student=student, status='active').first()
+        # 1. Active Semester & Course Information
+        active_sem = StudentSemester.objects.filter(
+            student=student, 
+            status=StudentSemester.StatusChoices.ACTIVE
+        ).select_related('semester', 'semester__course_batch', 'semester__course_batch__course').first()
         context['active_semester'] = active_sem
         
-        # Dashboard stats to be expanded in later tasks
+        if active_sem and active_sem.semester and active_sem.semester.course_batch:
+            course = active_sem.semester.course_batch.course
+            context['course_info'] = f"{course.code or course.name} — Semester {active_sem.semester.semester_number}"
+        else:
+            student_course = StudentCourse.objects.filter(student=student, status='enrolled').select_related('course').first()
+            if student_course and student_course.course:
+                context['course_info'] = f"{student_course.course.code or student_course.course.name}"
+            else:
+                context['course_info'] = f"Enrollment: {student.enrollment_no}"
+
+        # 2. Overall Attendance Percentage
+        attendance_qs = Attendance.objects.filter(student=student)
+        if active_sem:
+            attendance_qs = attendance_qs.filter(lecture__offering__semester=active_sem.semester)
+        total_attendance = attendance_qs.count()
+        present_attendance = attendance_qs.filter(status=Attendance.StatusChoices.PRESENT).count()
+        if total_attendance > 0:
+            context['attendance_pct'] = f"{round((present_attendance / total_attendance) * 100, 1)}%"
+        else:
+            context['attendance_pct'] = "N/A"
+
+        # 3. Current SGPA (Latest Semester Report)
+        latest_report = SemesterReport.objects.filter(student=student).order_by('-semester__semester_number').first()
+        if latest_report and latest_report.sgpa is not None:
+            context['current_sgpa'] = f"{latest_report.sgpa:.2f}"
+        else:
+            context['current_sgpa'] = "N/A"
+
+        # 4. Pending Assignments & Upcoming Assignments List
+        if active_sem:
+            active_assignments = Assignment.objects.filter(
+                offering__semester=active_sem.semester,
+                status=Assignment.StatusChoices.ACTIVE
+            ).select_related('offering', 'offering__subject').order_by('due_datetime')
+        else:
+            active_assignments = Assignment.objects.none()
+
+        submitted_ids = set(AssignmentSubmission.objects.filter(
+            student=student
+        ).values_list('assignment_id', flat=True))
+
+        pending_assignments = [a for a in active_assignments if a.id not in submitted_ids]
+        context['pending_assignments_count'] = len(pending_assignments)
+        context['upcoming_assignments'] = pending_assignments[:5]
+
+        # 5. Upcoming Exams
+        now = timezone.now().date()
+        exams_qs = Exam.objects.filter(exam_date__gte=now).exclude(status='completed')
+        if active_sem:
+            exams_qs = exams_qs.filter(offering__semester=active_sem.semester)
+        upcoming_exams = exams_qs.select_related('offering', 'offering__subject').order_by('exam_date')
+        context['upcoming_exams_count'] = upcoming_exams.count()
+        context['upcoming_exams'] = upcoming_exams[:5]
+
+        # 6. Recent Performance (Exam Results)
+        recent_results = ExamResult.objects.filter(
+            student=student,
+            is_latest=True,
+            exam__status='published'
+        ).select_related('exam', 'exam__offering', 'exam__offering__subject').order_by('-exam__exam_date')[:5]
+        context['recent_results'] = recent_results
+
         return context
 
 @method_decorator(student_required, name='dispatch')

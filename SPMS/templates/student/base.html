@@ -8,11 +8,13 @@
         {% include 'components/messages.html' %}
         
         <div class="page-header">
-            <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            <h1 class="page-title">{% block page_title %}Student Portal{% endblock %}</h1>
             <p class="page-subtitle">{% block page_subtitle %}{% endblock %}</p>
         </div>
         
-        {% block dashboard_content %}{% endblock %}
+        {% block dashboard_content %}
+            {% block content %}{% endblock %}
+        {% endblock %}
     </main>
 </div>
 {% endblock %}

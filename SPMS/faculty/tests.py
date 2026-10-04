@@ -117,27 +117,24 @@ class FacultyModuleTests(TestCase):
     def test_create_lecture_own_offering(self):
         self.client.login(email='faculty1@example.com', password='password123')
         data = {
-            'offering': self.offering1.pk,
             'date': (datetime.date.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
             'start_time': '12:00',
             'end_time': '13:00'
         }
-        response = self.client.post(reverse('faculty:lecture_create'), data)
-        self.assertRedirects(response, reverse('faculty:lectures'))
+        response = self.client.post(reverse('faculty:lecture_create', kwargs={'offering_id': self.offering1.pk}), data)
+        self.assertRedirects(response, reverse('faculty:lectures', kwargs={'offering_id': self.offering1.pk}))
         self.assertEqual(Lecture.objects.filter(offering=self.offering1).count(), 2)
 
     def test_cannot_create_lecture_for_other_faculty(self):
         self.client.login(email='faculty1@example.com', password='password123')
         data = {
-            'offering': self.offering2.pk, # Belongs to Faculty 2
             'date': (datetime.date.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
             'start_time': '12:00',
             'end_time': '13:00'
         }
-        response = self.client.post(reverse('faculty:lecture_create'), data)
-        # Form should be invalid because offering2 is not in the restricted queryset
-        self.assertEqual(response.status_code, 200) 
-        self.assertTrue('offering' in response.context['form'].errors)
+        response = self.client.post(reverse('faculty:lecture_create', kwargs={'offering_id': self.offering2.pk}), data)
+        # Should be 404 because offering2 belongs to another faculty
+        self.assertEqual(response.status_code, 404)
 
     # --- Attendance Tests ---
     
@@ -192,8 +189,7 @@ class FacultyModuleTests(TestCase):
             'feedback': ''
         }
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('__all__' in response.context['form'].errors)
+        self.assertTrue('marks_awarded' in response.context['form'].errors)
 
     # --- Exam Tests ---
     def test_bulk_exam_results(self):

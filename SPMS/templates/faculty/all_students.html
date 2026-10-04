@@ -1,0 +1,49 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}Students Directory{% endblock %}
+{% block page_subtitle %}Students enrolled in your active subject offerings and batches{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <form method="get" class="search-form" style="display: flex; gap: 10px; max-width: 400px; width: 100%;">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search by name, enrollment, email..." class="form-control" style="flex: 1;">
+            <button type="submit" class="btn btn-primary">Search</button>
+            {% if search_query %}
+                <a href="{% url 'faculty:faculty_students' %}" class="btn btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Enrollment No</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td><strong>{{ s.enrollment_no }}</strong></td>
+                    <td>{{ s.user.get_full_name|default:s.user.email }}</td>
+                    <td>{{ s.user.email }}</td>
+                    <td>{{ s.get_gender_display|default:"--" }}</td>
+                    <td>
+                        <a href="{% url 'faculty:student_detail' s.pk %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">View Details &rarr;</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--muted); padding: 25px;">No students found matching your criteria.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

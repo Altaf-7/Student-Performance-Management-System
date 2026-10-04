@@ -4,9 +4,9 @@ from django.db.models import CheckConstraint, Q
 
 class Exam(models.Model):
     class ExamTerm(models.TextChoices):
-        MID_SEM = 'mid_sem', 'Mid Semester'
-        END_SEM = 'end_sem', 'End Semester'
-        INTERNAL = 'internal', 'Internal'
+        INTERNAL = 'internal', 'Mini Test'
+        MID_SEM = 'mid_sem', 'Mid Term'
+        END_SEM = 'end_sem', 'End Term'
 
     class ExamCategory(models.TextChoices):
         WRITTEN = 'written', 'Written'
@@ -86,6 +86,10 @@ class ExamResult(models.Model):
         self.clean()
         # Optional: simple grade logic could go here if not handled by an external service
         super().save(*args, **kwargs)
+
+    @property
+    def is_pass(self):
+        return (self.result_status or '').lower() == 'pass'
 
     def __str__(self):
         return f"{self.student.enrollment_no} - {self.exam}"

@@ -1,17 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --bg: #f9fafb;        /* soft off-white background */
-    --text: #1e293b;      /* dark slate text */
-    --muted: #64748b;     /* muted gray text */
-    --line: #e2e8f0;      /* border line color */
-    --soft: #ffffff;      /* pure white for cards */
-    --primary: #4f46e5;   /* indigo */
+    --bg: #f9fafb;
+    /* soft off-white background */
+    --text: #1e293b;
+    /* dark slate text */
+    --muted: #64748b;
+    /* muted gray text */
+    --line: #e2e8f0;
+    /* border line color */
+    --soft: #ffffff;
+    /* pure white for cards */
+    --primary: #4f46e5;
+    /* indigo */
     --primary-hover: #4338ca;
-    --accent: #2563eb;    /* royal blue */
+    --accent: #2563eb;
+    /* royal blue */
     --black: #0f172a;
     --radius: 12px;
-    
+
     /* Glassmorphism for Light Theme */
     --glass-bg: rgba(255, 255, 255, 0.85);
     --glass-border: rgba(255, 255, 255, 0.6);
@@ -31,13 +38,16 @@
     width: 8px;
     height: 8px;
 }
+
 ::-webkit-scrollbar-track {
     background: var(--bg);
 }
+
 ::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
 }
@@ -282,7 +292,7 @@ h1 {
 .card-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, rgba(79,70,229,0.1), rgba(37,99,235,0.1));
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(37, 99, 235, 0.1));
     border-radius: 12px;
     display: grid;
     place-items: center;
@@ -376,7 +386,10 @@ h1 {
     color: var(--text);
 }
 
-.form-control {
+.form-control,
+.form-group input:not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 14px 16px;
     background: var(--soft);
@@ -388,7 +401,10 @@ h1 {
     transition: all 0.2s ease;
 }
 
-.form-control:focus {
+.form-control:focus,
+.form-group input:not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--primary);
     background: var(--soft);
@@ -412,6 +428,7 @@ footer {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -422,12 +439,15 @@ footer {
     .navbar {
         padding: 0 24px;
     }
+
     .hero {
         padding-top: 40px;
     }
+
     .section-padding {
         padding: 80px 24px;
     }
+
     footer {
         flex-direction: column;
         gap: 10px;

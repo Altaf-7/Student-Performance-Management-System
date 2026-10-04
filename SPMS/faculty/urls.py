@@ -11,6 +11,8 @@ urlpatterns = [
     path('subjects/', views.SubjectOfferingListView.as_view(), name='subjects'),
     path('subjects/<int:pk>/', views.SubjectOfferingDetailView.as_view(), name='subject_detail'),
     path('subjects/<int:pk>/students/', views.StudentListView.as_view(), name='students'),
+    path('students/', views.FacultyAllStudentsView.as_view(), name='faculty_students'),
+    path('students/<int:pk>/', views.FacultyStudentDetailView.as_view(), name='student_detail'),
     
     # Lectures
     path('subjects/<int:offering_id>/lectures/', views.LectureListView.as_view(), name='lectures'),
@@ -20,6 +22,7 @@ urlpatterns = [
     path('lectures/<int:pk>/delete/', views.LectureDeleteView.as_view(), name='lecture_delete'),
     
     # Attendance
+    path('attendance/', views.FacultyAttendanceDashboardView.as_view(), name='attendance'),
     path('lectures/<int:lecture_id>/attendance/', views.AttendanceEntryView.as_view(), name='attendance_entry'),
     path('subjects/<int:offering_id>/attendance/', views.AttendanceSummaryView.as_view(), name='attendance_summary'),
     

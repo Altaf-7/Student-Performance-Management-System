@@ -1,0 +1,158 @@
+{% extends 'faculty/base.html' %}
+
+{% block page_title %}{{ student.user.get_full_name|default:student.user.email }}{% endblock %}
+{% block page_subtitle %}Enrollment No: {{ student.enrollment_no }} • {{ student.user.email }}{% endblock %}
+
+{% block dashboard_content %}
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'faculty:faculty_students' %}" class="btn btn-secondary">&larr; Back to Students</a>
+</div>
+
+<!-- Personal & Academic Info Grid -->
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 30px;">
+    <div class="card">
+        <h2>Personal Information</h2>
+        <p><strong>Full Name:</strong> {{ student.user.get_full_name|default:"Not Provided" }}</p>
+        <p><strong>Email:</strong> {{ student.user.email }}</p>
+        <p><strong>Contact:</strong> {{ student.user.contact_number|default:"Not Provided" }}</p>
+        <p><strong>Date of Birth:</strong> {{ student.date_of_birth|default:"Not Provided" }}</p>
+        <p><strong>Gender:</strong> {{ student.get_gender_display|default:"Not Provided" }}</p>
+        <p><strong>Guardian:</strong> {{ student.guardian_name|default:"Not Provided" }} ({{ student.guardian_contact|default:"--" }})</p>
+        <p><strong>Address:</strong> {{ student.address|default:"Not Provided" }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Academic Information</h2>
+        {% if active_semester %}
+            <p><strong>Current Course:</strong> {{ active_semester.semester.course_batch.course.name }} ({{ active_semester.semester.course_batch.course.code }})</p>
+            <p><strong>Department:</strong> {{ active_semester.semester.course_batch.course.department.name }}</p>
+            <p><strong>Batch:</strong> {{ active_semester.semester.course_batch.academic_year }}</p>
+            <p><strong>Current Semester:</strong> Semester {{ active_semester.semester.semester_number }}</p>
+            <p><strong>Semester Status:</strong> <span class="badge badge-success">{{ active_semester.status|title }}</span></p>
+        {% else %}
+            <p style="color: var(--muted);">No active semester record found.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Attendance Section -->
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Subject Attendance (Your Subjects)</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Total Lectures</th>
+                    <th>Attended</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for att in attendance_stats %}
+                <tr>
+                    <td><strong>{{ att.offering.subject.name }}</strong> ({{ att.offering.subject.code }})</td>
+                    <td>{{ att.total }}</td>
+                    <td>{{ att.attended }}</td>
+                    <td>
+                        <span class="badge {% if att.percentage >= 75 %}badge-success{% elif att.percentage >= 50 %}badge-warning{% else %}badge-neutral{% endif %}">
+                            {{ att.percentage }}%
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="empty-state">No attendance records found for your subjects.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Assignment Submissions Section -->
+<div class="dashboard-section" style="margin-top: 2rem;">
+    <div class="section-header">
+        <h2 class="section-title">Assignment Submissions</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Assignment</th>
+                    <th>Subject</th>
+                    <th>Submitted At</th>
+                    <th>Marks Awarded</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in submissions %}
+                <tr>
+                    <td><strong>{{ sub.assignment.title }}</strong></td>
+                    <td>{{ sub.assignment.offering.subject.code }}</td>
+                    <td>{{ sub.submitted_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        {% if sub.marks_awarded is not None %}
+                            {{ sub.marks_awarded }} / {{ sub.assignment.maximum_marks }}
+                        {% else %}
+                            <span style="color: var(--muted);">Ungraded</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'faculty:submission_detail' sub.pk %}" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;">Review &rarr;</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty-state">No assignment submissions by this student yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Exam Results Section -->
+<div class="dashboard-section" style="margin-top: 2rem;">
+    <div class="section-header">
+        <h2 class="section-title">Exam Results</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Exam Term / Type</th>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in exam_results %}
+                <tr>
+                    <td><strong>{{ res.exam.get_exam_term_display }}</strong> ({{ res.exam.get_exam_category_display }})</td>
+                    <td>{{ res.exam.offering.subject.code }}</td>
+                    <td>{{ res.marks_obtained }} / {{ res.exam.total_marks }}</td>
+                    <td>{{ res.grade|default:"--" }}</td>
+                    <td>
+                        {% if res.result_status == 'Pass' %}
+                            <span class="badge badge-success">Pass</span>
+                        {% else %}
+                            <span class="badge badge-danger">{{ res.result_status|default:"Fail" }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty-state">No exam results published for this student.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

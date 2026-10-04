@@ -1,14 +1,9 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.shortcuts import redirect
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from django.contrib import messages
 
-from accounts.forms import StudentSignUpForm, CustomAuthenticationForm, FacultySignUpForm
+from accounts.forms import CustomAuthenticationForm
 from accounts.models import User
-from django.utils.decorators import method_decorator
-from accounts.decorators import admin_required
 
 class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
@@ -29,33 +24,3 @@ class CustomLoginView(LoginView):
             return reverse_lazy('spms_admin:dashboard')
         else:
             return super().get_success_url()
-
-class StudentSignUpView(CreateView):
-    model = User
-    form_class = StudentSignUpForm
-    template_name = 'authentication/signup.html'
-    
-    def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'student'
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        messages.success(self.request, 'Registration successful. Welcome!')
-        return redirect('students:dashboard')
-
-@method_decorator(admin_required, name='dispatch')
-class FacultySignUpView(CreateView):
-    model = User
-    form_class = FacultySignUpForm
-    template_name = 'authentication/signup.html'
-    
-    def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'faculty'
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save()
-        messages.success(self.request, f'Faculty account for {user.get_full_name()} created successfully.')
-        return redirect('spms_admin:dashboard')

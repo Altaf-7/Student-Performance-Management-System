@@ -75,6 +75,11 @@ class SubjectOffering(models.Model):
     subject_type = models.CharField(max_length=20, choices=SubjectType.choices, default=SubjectType.CORE)
     credits = models.PositiveIntegerField()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['subject', 'semester'], name='unique_subject_offering')
+        ]
+
     def __str__(self):
         return f"{self.subject.code} - {self.semester}"
 
