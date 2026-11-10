@@ -69,14 +69,13 @@ The application separates authentication data from role-specific information and
 
 ### Database
 
-* **MySQL**
+* **SQLite**
 
 ### Frontend
 
 * HTML5
 * CSS3
 * JavaScript
-* Bootstrap
 
 ### Development Tools
 
