@@ -1,0 +1,20 @@
+{% extends 'student/base.html' %}
+{% block title %}My Profile | AcadTrack{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block page_subtitle %}Manage your personal and contact information.{% endblock %}
+
+{% block dashboard_content %}
+<div class="card" style="max-width: 650px;">
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field.errors }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

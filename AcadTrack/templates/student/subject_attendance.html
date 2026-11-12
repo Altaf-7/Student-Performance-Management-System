@@ -1,0 +1,45 @@
+{% extends 'student/base.html' %}
+{% block title %}Attendance - {{ offering.subject.name }} | AcadTrack{% endblock %}
+{% block page_title %}Attendance: {{ offering.subject.name }}{% endblock %}
+{% block page_subtitle %}{{ offering.subject.code }} • Overall Attendance: {{ percentage }}% ({{ attended_lectures }}/{{ total_lectures }}){% endblock %}
+
+{% block dashboard_content %}
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'students:attendance_summary' %}" class="btn btn-secondary">&larr; Back to Attendance Summary</a>
+</div>
+
+<div class="dashboard-section">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time Slot</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lecture_records %}
+                <tr>
+                    <td>{{ item.lecture.date|date:"d M Y"|default:item.lecture.date }}</td>
+                    <td>{{ item.lecture.start_time|time:"H:i" }} - {{ item.lecture.end_time|time:"H:i" }}</td>
+                    <td>
+                        {% if item.status == 'present' %}
+                            <span class="badge badge-success">Present</span>
+                        {% elif item.status == 'absent' %}
+                            <span class="badge badge-error">Absent</span>
+                        {% elif item.status == 'late' %}
+                            <span class="badge badge-warning">Late</span>
+                        {% else %}
+                            <span class="badge badge-neutral">Not Marked</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="empty-state">No lecture attendance records found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

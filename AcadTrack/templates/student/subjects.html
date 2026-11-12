@@ -1,0 +1,41 @@
+{% extends 'student/base.html' %}
+{% block title %}Current Subjects | AcadTrack{% endblock %}
+{% block page_title %}Current Subjects{% endblock %}
+{% block page_subtitle %}Subjects enrolled in your active semester.{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-section">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Subject Name</th>
+                    <th>Type</th>
+                    <th>Credits</th>
+                    <th>Faculty</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offering in offerings %}
+                <tr>
+                    <td><strong>{{ offering.subject.code }}</strong></td>
+                    <td>{{ offering.subject.name }}</td>
+                    <td>{{ offering.get_subject_type_display }}</td>
+                    <td>{{ offering.credits }}</td>
+                    <td>{{ offering.faculty.user.get_full_name|default:offering.faculty.user.email|default:"Not Assigned" }}</td>
+                    <td>
+                        <a href="{% url 'students:subject_detail' offering.id %}" class="btn btn-primary" style="padding: 5px 12px; font-size: 12px;">View &rarr;</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="empty-state">No active subjects found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

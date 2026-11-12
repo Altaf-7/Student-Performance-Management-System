@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}500 — Server Error | AcadTrack{% endblock %}
+{% block layout %}
+<main style="min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
+    <div class="glass-panel" style="max-width: 520px; width: 100%; text-align: center; padding: 48px 32px; border-radius: 16px;">
+        <div style="font-size: 72px; font-weight: 800; line-height: 1; margin-bottom: 12px; background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            500
+        </div>
+        <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text);">Internal Server Error</h2>
+        <p style="color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 28px;">
+            Something unexpected occurred on the server. Our technical team has been notified. Please try again shortly.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'landing_page' %}" class="btn btn-primary" style="padding: 12px 24px;">Return Home</a>
+            <a href="javascript:location.reload()" class="btn btn-secondary" style="padding: 12px 24px;">Retry</a>
+        </div>
+    </div>
+</main>
+{% endblock %}
